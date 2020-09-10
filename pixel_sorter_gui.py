@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'f:\GitHub\pixelsort\pixel_sorter_gui.ui',
-# licensing of 'f:\GitHub\pixelsort\pixel_sorter_gui.ui' applies.
+# Form implementation generated from reading ui file 'c:\Users\DHUIZING\Documents\GitHub\pixelsort\pixel_sorter_gui.ui',
+# licensing of 'c:\Users\DHUIZING\Documents\GitHub\pixelsort\pixel_sorter_gui.ui' applies.
 #
-# Created: Wed Sep  9 22:27:13 2020
+# Created: Thu Sep 10 17:00:56 2020
 #      by: pyside2-uic  running on PySide2 5.12.2
 #
 # WARNING! All changes made in this file will be lost!

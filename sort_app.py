@@ -102,7 +102,6 @@ class Option():
 
         if self.name == "clength":
             print("Need to set up rules for this widget boi")
-            # DAVE: Finish setting up the template widget for clength
             self.pw = Param_Clength()
             self.pw.setupUi(Frame=frame, param_name=self.name)
             self.pw.t_param_clength.setText(self.name_display)
@@ -561,11 +560,18 @@ class Sort_App():
     def images_picked(self, picker_wig, sorter_image_type, label_wig):
         '''Pass in a path to an image and the label widget that it show show up in.'''
         pic_urls = picker_wig.selectedFiles()
+        picker_wig.setParent(None)
+
         if pic_urls:
             # Checks if what user selected is a dir or files:
             if Path(pic_urls[0]).is_dir():
                 selected_dir = Path(pic_urls[0])
-                files_in_folder = selected_dir.glob("*.*")
+                
+                files_in_folder = []
+                for file_type in ["*.jpg", "*.png", "*.bmp", "*.tiff"]:
+                    files_in_folder.extend(selected_dir.glob(file_type))
+                #files_in_folder = selected_dir.glob("*.*")
+
                 pic_paths = [Path(pic) for pic in files_in_folder]
             else:   # files are images
                 pic_paths = [Path(pic) for pic in pic_urls]
@@ -579,20 +585,22 @@ class Sort_App():
             first_img = self.sorter_images[0]
         elif sorter_image_type == "mask":
             self.sorter_image_masks = imgs
-            [sorter_image.generate_core_mask_sets() for sorter_image in self.sorter_images]     # Generates needed PIL images
+            [sorter_image.generate_core_mask_sets() for sorter_image in self.sorter_image_masks]     # Generates needed PIL images
             self.check_if_image_and_mask_image_share_a_path()
-
-### DAVE TO DO:
-# Error is occuring when picking a mask first. Fix this pls.
-# Next: Have mask thumbnail show up in preview area.
 
             if self.gui_active_mask_section == "folder":
                 # add paths to scroll_area_found_masks widget
+                
+                self.remove_folder_text(associated_wig=self.gui.scroll_area_found_masks)
+                
+                
+                for sorter_mask in self.sorter_image_masks:
+                    self.add_folder_text(associated_wig=self.gui.scroll_area_found_masks, img_path=sorter_mask.path)
+
                 pass
             elif self.gui_active_mask_section == "single":
                 first_img = self.sorter_image_masks[0]
 
-      
         # Displays first image's thumbnail:
         try:        # first_img may not have been set.    
             pix_map = first_img.create_pixmap(first_img.thumbnail)
@@ -609,7 +617,30 @@ class Sort_App():
         
         self.process_events()
     
-    
+
+    def add_folder_text(self, associated_wig, img_path):
+        '''Adds text to associated widget'''
+        mask_label = QtWidgets.QLabel(associated_wig)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)  
+        sizePolicy.setHeightForWidth(mask_label.sizePolicy().hasHeightForWidth())
+        mask_label.setSizePolicy(sizePolicy)
+        mask_label.setObjectName(f"t_found_mask_{img_path.stem}")
+        layout = associated_wig.layout()
+        layout.addWidget(mask_label)
+        # DAVE: NEED TO GET THE LAYOUT PROPERLY
+        children = associated_wig.children()
+
+        mask_label.setText(f"{img_path.stem}")      
+
+    def remove_folder_text(self, associated_wig):
+        '''Removes all text in the associated widget'''
+        children = associated_wig.children()
+        for child in children:
+            child.setParent(None)
+        
+
     def check_if_image_and_mask_image_share_a_path(self):
         '''Checks if new images overlap with any previously selected images by comparing Paths.'''
         if self.sorter_images and self.sorter_image_masks:
