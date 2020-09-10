@@ -139,12 +139,6 @@
              </property>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_8">
-               <property name="spacing">
-                <number>20</number>
-               </property>
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
                <property name="topMargin">
                 <number>0</number>
                </property>
@@ -169,12 +163,6 @@
                </item>
                <item>
                 <widget class="QLabel" name="t_image_mask_desc">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
                  <property name="font">
                   <font>
                    <italic>true</italic>
@@ -182,9 +170,6 @@
                  </property>
                  <property name="text">
                   <string>Image used for masking parts of the image. Must be black and white.</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -946,9 +931,6 @@
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_7">
-               <property name="spacing">
-                <number>20</number>
-               </property>
                <property name="topMargin">
                 <number>0</number>
                </property>
@@ -990,6 +972,13 @@
                 </widget>
                </item>
               </layout>
+             </item>
+             <item>
+              <widget class="Line" name="line">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QLabel" name="t_parameters">
@@ -1091,9 +1080,6 @@
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_6">
-               <property name="spacing">
-                <number>20</number>
-               </property>
                <property name="topMargin">
                 <number>0</number>
                </property>
@@ -1320,9 +1306,6 @@
              </item>
              <item>
               <layout class="QHBoxLayout" name="hl_save_location">
-               <property name="spacing">
-                <number>20</number>
-               </property>
                <item>
                 <widget class="QPushButton" name="b_save_location">
                  <property name="sizePolicy">

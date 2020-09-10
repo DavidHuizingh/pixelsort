@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1053</width>
-    <height>745</height>
+    <width>1399</width>
+    <height>1000</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -94,8 +94,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>413</width>
-            <height>696</height>
+            <width>402</width>
+            <height>1065</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -139,12 +139,6 @@
              </property>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_8">
-               <property name="spacing">
-                <number>20</number>
-               </property>
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
                <property name="topMargin">
                 <number>0</number>
                </property>
@@ -169,22 +163,13 @@
                </item>
                <item>
                 <widget class="QLabel" name="t_image_mask_desc">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
                  <property name="font">
                   <font>
                    <italic>true</italic>
                   </font>
                  </property>
                  <property name="text">
-                  <string>Image used for masking parts of the image. Must be black and white.</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
+                  <string>(description)</string>
                  </property>
                 </widget>
                </item>
@@ -600,7 +585,7 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>287</width>
+                         <width>276</width>
                          <height>69</height>
                         </rect>
                        </property>
@@ -685,9 +670,6 @@
              </property>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_9">
-               <property name="spacing">
-                <number>20</number>
-               </property>
                <property name="topMargin">
                 <number>0</number>
                </property>
@@ -712,19 +694,13 @@
                </item>
                <item>
                 <widget class="QLabel" name="t_image_desc">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
                  <property name="font">
                   <font>
                    <italic>true</italic>
                   </font>
                  </property>
                  <property name="text">
-                  <string>*Required* This is the image that will have pixel sorting applied to it. JPG, PNG, TIFF, etc.</string>
+                  <string>(description)</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -899,9 +875,6 @@
              </property>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_2">
-               <property name="spacing">
-                <number>20</number>
-               </property>
                <property name="topMargin">
                 <number>0</number>
                </property>
@@ -926,19 +899,13 @@
                </item>
                <item>
                 <widget class="QLabel" name="t_interval_sorting_desc">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
                  <property name="font">
                   <font>
                    <italic>true</italic>
                   </font>
                  </property>
                  <property name="text">
-                  <string>Controls how the intervals used for sorting are defined.</string>
+                  <string>(description)</string>
                  </property>
                 </widget>
                </item>
@@ -946,9 +913,6 @@
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_7">
-               <property name="spacing">
-                <number>20</number>
-               </property>
                <property name="topMargin">
                 <number>0</number>
                </property>
@@ -962,7 +926,7 @@
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>70</width>
+                   <width>80</width>
                    <height>0</height>
                   </size>
                  </property>
@@ -972,6 +936,16 @@
                  <property name="frame">
                   <bool>true</bool>
                  </property>
+                 <item>
+                  <property name="text">
+                   <string extracomment="option 1 comment">option 1</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>option 2</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item>
@@ -984,12 +958,16 @@
                  <property name="text">
                   <string>(description)</string>
                  </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
                 </widget>
                </item>
               </layout>
+             </item>
+             <item>
+              <widget class="Line" name="line">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QLabel" name="t_parameters">
@@ -1011,12 +989,122 @@
               </widget>
              </item>
              <item>
+              <widget class="QFrame" name="f_param_random">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_4">
+                <property name="leftMargin">
+                 <number>2</number>
+                </property>
+                <property name="topMargin">
+                 <number>2</number>
+                </property>
+                <property name="rightMargin">
+                 <number>2</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>2</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout" name="hl_param_randomness_t">
+                  <property name="spacing">
+                   <number>10</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="t_param_randomness">
+                    <property name="text">
+                     <string>Randomness</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="t_param_randomness_desc">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <italic>true</italic>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>What percentage of intervals not to sort. 0 by default.</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="hl_param_randomness_b">
+                  <item>
+                   <widget class="QLabel" name="t_param_randomness_value">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text">
+                     <string>rand val</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSlider" name="slider_param_randomness">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximum">
+                     <number>100</number>
+                    </property>
+                    <property name="value">
+                     <number>0</number>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="tickPosition">
+                     <enum>QSlider::TicksBothSides</enum>
+                    </property>
+                    <property name="tickInterval">
+                     <number>10</number>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
               <spacer name="verticalSpacer_5">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
                <property name="sizeType">
-                <enum>QSizePolicy::Preferred</enum>
+                <enum>QSizePolicy::MinimumExpanding</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -1025,6 +1113,462 @@
                 </size>
                </property>
               </spacer>
+             </item>
+             <item>
+              <widget class="QFrame" name="f_param_thresh_l">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_5">
+                <property name="leftMargin">
+                 <number>2</number>
+                </property>
+                <property name="topMargin">
+                 <number>2</number>
+                </property>
+                <property name="rightMargin">
+                 <number>2</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>2</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout" name="hl_param_thresh_l_t">
+                  <property name="spacing">
+                   <number>10</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="t_param_thresh_l">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text">
+                     <string>Threshold (lower)</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="t_param_thresh_l_desc">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <italic>true</italic>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>How dark must a pixel be to be considered as a 'border' for sorting? Takes values from 0-1. 0.25 by default. Used in edges and threshold modes.</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="hl_param_thresh_l_b">
+                  <property name="spacing">
+                   <number>6</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="t_param_thresh_l_value">
+                    <property name="text">
+                     <string>thresh (l) val</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSlider" name="slider_param_thresh_l">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximum">
+                     <number>100</number>
+                    </property>
+                    <property name="singleStep">
+                     <number>1</number>
+                    </property>
+                    <property name="value">
+                     <number>0</number>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="tickPosition">
+                     <enum>QSlider::TicksBothSides</enum>
+                    </property>
+                    <property name="tickInterval">
+                     <number>10</number>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="f_param_thresh_u">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_6">
+                <property name="leftMargin">
+                 <number>2</number>
+                </property>
+                <property name="topMargin">
+                 <number>2</number>
+                </property>
+                <property name="rightMargin">
+                 <number>2</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>2</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout" name="hl_param_thresh_u_t">
+                  <property name="spacing">
+                   <number>10</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="t_param_thresh_u">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text">
+                     <string>Threshold (upper)</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="t_param_thresh_u_desc">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <italic>true</italic>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>How bright must a pixel be to be considered as a 'border' for sorting? Takes values from 0-1. 0.8 by default. Used in threshold mode.</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="hl_param_thresh_u_b">
+                  <item>
+                   <widget class="QLabel" name="t_param_thresh_u_value">
+                    <property name="text">
+                     <string>thresh (u) val</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSlider" name="slider_param_thresh_u">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximum">
+                     <number>100</number>
+                    </property>
+                    <property name="singleStep">
+                     <number>1</number>
+                    </property>
+                    <property name="value">
+                     <number>0</number>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="tickPosition">
+                     <enum>QSlider::TicksBothSides</enum>
+                    </property>
+                    <property name="tickInterval">
+                     <number>10</number>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="f_param_clength">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_7">
+                <property name="leftMargin">
+                 <number>2</number>
+                </property>
+                <property name="topMargin">
+                 <number>2</number>
+                </property>
+                <property name="rightMargin">
+                 <number>2</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>2</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout" name="hl_param_clength_t">
+                  <property name="spacing">
+                   <number>10</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="t_param_clength">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text">
+                     <string>Char. length</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="t_param_clength_desc">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <italic>true</italic>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Characteristic length for the random width generator. Used in mode random and waves.</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="hl_param_clength_b">
+                  <item>
+                   <widget class="QLabel" name="t_param_clength_helper">
+                    <property name="text">
+                     <string>(0 - inf)</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="tb_param_clength">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>20</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>35</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_3">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                     <enum>QSizePolicy::MinimumExpanding</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>60</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="f_param_angle">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_8">
+                <property name="leftMargin">
+                 <number>2</number>
+                </property>
+                <property name="topMargin">
+                 <number>2</number>
+                </property>
+                <property name="rightMargin">
+                 <number>2</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>2</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout" name="hl_param_angle_t">
+                  <property name="spacing">
+                   <number>10</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="t_param_angle">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text">
+                     <string>Angle</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="t_param_angle_desc">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <italic>true</italic>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Angle at which you're pixel sorting in degrees. 0 (horizontal) by default.</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="hl_param_angle_b">
+                  <item>
+                   <widget class="QLabel" name="t_param_angle_value">
+                    <property name="text">
+                     <string>angle val</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSlider" name="slider_param_angle">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximum">
+                     <number>360</number>
+                    </property>
+                    <property name="singleStep">
+                     <number>1</number>
+                    </property>
+                    <property name="value">
+                     <number>0</number>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="tickPosition">
+                     <enum>QSlider::TicksBothSides</enum>
+                    </property>
+                    <property name="tickInterval">
+                     <number>15</number>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
              </item>
             </layout>
            </item>
@@ -1044,9 +1588,6 @@
              </property>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_5">
-               <property name="spacing">
-                <number>20</number>
-               </property>
                <item>
                 <widget class="QLabel" name="t_pixel_ordering">
                  <property name="sizePolicy">
@@ -1068,19 +1609,13 @@
                </item>
                <item>
                 <widget class="QLabel" name="t_pixel_ordering_desc">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
                  <property name="font">
                   <font>
                    <italic>true</italic>
                   </font>
                  </property>
                  <property name="text">
-                  <string>Way in which the pixels are ordered.</string>
+                  <string>(description)</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -1091,9 +1626,6 @@
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_6">
-               <property name="spacing">
-                <number>20</number>
-               </property>
                <property name="topMargin">
                 <number>0</number>
                </property>
@@ -1107,7 +1639,7 @@
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>70</width>
+                   <width>80</width>
                    <height>0</height>
                   </size>
                  </property>
@@ -1117,6 +1649,16 @@
                  <property name="frame">
                   <bool>true</bool>
                  </property>
+                 <item>
+                  <property name="text">
+                   <string extracomment="option 1 comment">option 1</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>option 2</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item>
@@ -1134,9 +1676,6 @@
                  </property>
                  <property name="text">
                   <string>(description)</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -1176,19 +1715,6 @@
              </property>
              <item>
               <layout class="QHBoxLayout" name="hl_generation">
-               <item>
-                <spacer name="horizontalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
                <item>
                 <widget class="QPushButton" name="b_generate_preview">
                  <property name="sizePolicy">
@@ -1240,19 +1766,6 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <spacer name="horizontalSpacer_5">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
               </layout>
              </item>
             </layout>
@@ -1273,9 +1786,6 @@
              </property>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_4">
-               <property name="spacing">
-                <number>20</number>
-               </property>
                <item>
                 <widget class="QLabel" name="t_save_location">
                  <property name="sizePolicy">
@@ -1297,19 +1807,13 @@
                </item>
                <item>
                 <widget class="QLabel" name="t_save_location_desc">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
                  <property name="font">
                   <font>
                    <italic>true</italic>
                   </font>
                  </property>
                  <property name="text">
-                  <string>Choose the location to save the file.</string>
+                  <string>(description)</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -1320,9 +1824,6 @@
              </item>
              <item>
               <layout class="QHBoxLayout" name="hl_save_location">
-               <property name="spacing">
-                <number>20</number>
-               </property>
                <item>
                 <widget class="QPushButton" name="b_save_location">
                  <property name="sizePolicy">
@@ -1357,9 +1858,6 @@
                  </property>
                  <property name="text">
                   <string>(save location)</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -1474,8 +1972,8 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>600</width>
-           <height>5</height>
+           <width>957</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>

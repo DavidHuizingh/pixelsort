@@ -11,6 +11,8 @@ from PySide2 import QtWidgets, QtGui
 
 
 from pixel_sorter_gui import Ui_MainWindow as sorter_gui
+from Param_Slider import Param_Slider
+from Param_Clength import Param_Clength
 
 
 ### CONFIG ###
@@ -71,10 +73,14 @@ class Option():
         self.val_current = None
         self.val_range_min = None
         self.val_range_max = None
+        self.slider_tick_interval = None
         #self.val_type = None
         self.associated_parameters = None       # if function
+        self.pw = None                          # pw (parameter widget) if parameter
+        #self.parameter_widget = None
+        self.slider_val = None                  #
 
-    def _setup(self, isParam, name, name_display, isEnabled, desc, val_default=None, val_range_min=None, val_range_max=None, associated_parameters=None):
+    def _setup(self, isParam, name, name_display, isEnabled, desc, val_default=None, val_range_min=None, val_range_max=None, slider_tick_interval=None, associated_parameters=None):
         '''Allows easy loading of settings.'''
         self.isParam = isParam
         self.name = name
@@ -85,7 +91,87 @@ class Option():
         self.val_current = self.val_default
         self.val_range_min = val_range_min
         self.val_range_max = val_range_max
+        self.slider_tick_interval = slider_tick_interval
         self.associated_parameters = associated_parameters
+
+        
+
+    def generate_param_widget(self, frame):
+        '''Pass in a QFrame that this widget will be constructed in.
+        Creates the parameter widget to be used in the UI.'''
+
+        if self.name == "clength":
+            print("Need to set up rules for this widget boi")
+            # DAVE: Finish setting up the template widget for clength
+            self.pw = Param_Clength()
+            self.pw.setupUi(Frame=frame, param_name=self.name)
+            self.pw.t_param_clength.setText(self.name_display)
+            self.pw.t_param_clength_desc.setText(self.desc)
+            q_validator = QtGui.QIntValidator()
+            q_validator.setBottom(0)
+            self.pw.tb_param_clength.setValidator(q_validator)
+            self.pw.tb_param_clength.setText(f"{self.val_default}")
+
+            self.pw.tb_param_clength.textChanged.connect(lambda:
+                self._validate_tb_and_update_values()
+                )
+
+        else:
+            self.pw = Param_Slider()
+            self.pw.setupUi(Frame=frame, param_name=self.name)
+            self.pw.t_param_generic.setText(self.name_display)
+            self.pw.t_param_generic_desc.setText(self.desc)
+            self.pw.t_param_generic_value.setText(str(self.val_default))
+            
+            self.pw.slider_param_generic.setMinimum(self.val_range_min)
+            self.pw.slider_param_generic.setMaximum(self.val_range_max)
+            self.pw.slider_param_generic.setTickInterval(self.slider_tick_interval)
+            
+            if self.name in ["threshold_lower", "threshold_upper"]:
+                # Store method as object to be called later:
+                self.conversion_method = self._val_converter_threshold
+                input_to_slider = self.val_default * 100
+                self.pw.slider_param_generic.setValue(input_to_slider)
+            else:
+                # Store method as object to be called later:
+                self.conversion_method = self._val_converter_none
+                self.pw.slider_param_generic.setValue(self.val_default)
+      
+            self._update_slider_display_and_values()
+            self.pw.slider_param_generic.valueChanged.connect(lambda:
+                self._update_slider_display_and_values()
+                )
+        
+    def _update_slider_display_and_values(self):
+        '''Called whenever slider value changes.
+        Applies any conversions needed, updates value displayed, and stores the value for when the pixel_sorter is called.'''
+        s_val = self.pw.slider_param_generic.value()
+
+        # The magic of storing a method as an object happens here:
+        self.val_current = self.conversion_method(s_val)
+        self.pw.t_param_generic_value.setText(str(self.val_current))
+
+    def _val_converter_threshold(self, slider_val):
+        '''Converts slider value -> value within range. Method used by both parameter thresholds.'''
+        converted_val = slider_val / 100
+        return converted_val
+    def _val_converter_none(self, slider_val):
+        '''Throwaway method. Passes back value passed in. Hot potato.'''
+        return slider_val
+
+    def _validate_tb_and_update_values(self):
+        '''Makes sure text entered in box is numerical.'''
+        # The QIntValidator should force this value to be an int already.
+        tb_text = self.pw.tb_param_clength.text()
+        
+        if tb_text in ["", None]:
+            pass
+        elif tb_text.isnumeric:
+            print(f"textbox text ({tb_text}) is numeric! Yay!")
+            self.val_current = int(tb_text)
+        else:
+            print(f"textbox text ({tb_text}) is NOT numeric. Boooo.")
+
 
 
 def _setup_all_sort_options():
@@ -96,17 +182,17 @@ def _setup_all_sort_options():
     parameter_randomness = Option()
     parameter_randomness._setup(isParam=True, name="randomness", name_display="Randomness", isEnabled=True,
         desc="What percentage of intervals not to sort. 0 by default.",
-        val_default=0, val_range_min=0, val_range_max=100, associated_parameters=None)
+        val_default=0, val_range_min=0, val_range_max=100, slider_tick_interval=10, associated_parameters=None)
 
     parameter_threshold_lower = Option()
     parameter_threshold_lower._setup(isParam=True, name="threshold_lower", name_display="Threshold - L", isEnabled=True,
         desc="How dark must a pixel be to be considered as a 'border' for sorting? Takes values from 0-1. 0.25 by default. Used in edges and threshold modes.",
-        val_default=.25, val_range_min=0, val_range_max=1, associated_parameters=None)
+        val_default=.25, val_range_min=0, val_range_max=100, slider_tick_interval=10, associated_parameters=None)
 
     parameter_threshold_upper = Option()
     parameter_threshold_upper._setup(isParam=True, name="threshold_upper", name_display="Threshold - U", isEnabled=True,
         desc="How bright must a pixel be to be considered as a 'border' for sorting? Takes values from 0-1. 0.8 by default. Used in threshold mode.",
-        val_default=.8, val_range_min=0, val_range_max=1, associated_parameters=None)
+        val_default=.8, val_range_min=0, val_range_max=100, slider_tick_interval=10, associated_parameters=None)
 
     parameter_clength = Option()
     parameter_clength._setup(isParam=True, name="clength", name_display="Characteristic Length", isEnabled=True,
@@ -116,7 +202,7 @@ def _setup_all_sort_options():
     parameter_angle = Option()
     parameter_angle._setup(isParam=True, name="angle", name_display="Angle", isEnabled=True,
         desc="Angle at which you're pixel sorting in degrees. 0 (horizontal) by default.",
-        val_default=0, val_range_min=0, val_range_max=360, associated_parameters=None)
+        val_default=0, val_range_min=0, val_range_max=360, slider_tick_interval=15, associated_parameters=None)
 
     parameters_list = [
         parameter_randomness,
@@ -128,7 +214,7 @@ def _setup_all_sort_options():
 
     # Creates dictionary of all the enabled parameters. 
     # <parameter name>, <parameter object>
-    parameters_dict = {(param.name, param) for param in parameters_list if param.isEnabled}
+    parameters_dict = {param.name: param for param in parameters_list if param.isEnabled}
     
     ## INTERVAL FUNCTIONS:
     # https://github.com/satyarth/pixelsort#interval-functions
@@ -186,7 +272,7 @@ def _setup_all_sort_options():
 
     # Creates dictionary of all the enabled functions. 
     # <function name>, <function object>
-    interval_functions_dict = {(func.name, func) for func in interval_function_list if func.isEnabled}
+    interval_functions_dict = {func.name : func for func in interval_function_list if func.isEnabled}
 
     sorting_functions = {
         "lightness" : "Sort by the lightness of a pixel according to a HSV representation.",
@@ -316,7 +402,7 @@ class Sort_App():
         
         self.sorter_images = None                   # list of Sorter_Image objects used as main images
         self.sorter_image_masks = None              # list of Sorter_Image objects used for masks
-        
+        self.output_dir = None        
         self.p_image_in = None      # LEGACY
         self.test_image = Path() / "images" / "DSC04688_EDIT_1000.jpg"
 
@@ -357,21 +443,74 @@ class Sort_App():
         gui.b_choose_mask_folder.pressed.connect(lambda: self.show_image_picker(
             sorter_image_type="mask", label_wig=gui.l_loaded_mask_preview)
             )
+        gui.b_save_location.pressed.connect(lambda: self.select_output_location())
+        self.output_dir = Path(__file__).parent
+        gui.t_save_location_current.setText(str(self.output_dir.absolute()))
 
         # Sets the interval functions drop down by cycling through interval_functions_dict:
-        '''
-        for i, func_object in enumerate(self.sort_interval_functions.values()):
-            gui.cb_interval_function.setItemText(index=i, text=func_object.name_display)
-        ''' 
-        gui.cb_interval_function.addItems([self.sort_interval_functions.values().name_display])
 
+        '''
+        names = [func_object.name_display for func_object in self.sort_interval_functions.values()]
+        gui.cb_interval_function.addItems(names)
+        #gui.cb_interval_function.setCurrentIndex(0)
+        '''
+
+        for func_object in self.sort_interval_functions.values():
+            gui.cb_interval_function.addItem(func_object.name)
+            gui.cb_interval_function.setToolTip(func_object.desc)
+
+        # fancy way of setting "description" field for current index.
+        gui.t_interval_function_desc.setText(
+            self.sort_interval_functions[gui.cb_interval_function.currentText()].desc                
+            )
+        
+        gui.cb_interval_function.currentIndexChanged.connect(lambda:
+            gui.t_interval_function_desc.setText(
+                self.sort_interval_functions[gui.cb_interval_function.currentText()].desc                
+                )
+            )
+        
         gui.cb_interval_function.currentIndexChanged.connect(lambda: self.gui_cb_interval_function_changed())
+
+        ### SETUP PARAMETERS
+        
+        for param_obj in self.sort_parameters.values():
+            # Creates a QFrame, parents it, adds it to the layout, and passes it into the parameter to generate the rest of the widget.
+            frame = QtWidgets.QFrame(parent=self.gui.scroll_area_settings_content)
+            self.gui.vl_interval_function.addWidget(frame)
+
+            param_obj.generate_param_widget(frame=frame)
+            
+
+
+        ### SETUP PIXEL ORDERING
+        # Similar setup to Interval Sorting Combo Box.
+
+        for name, desc in self.sorting_functions.items():
+            gui.cb_pixel_ordering_option.addItem(name)
+            gui.cb_pixel_ordering_option.setToolTip(desc)
+
+        gui.t_pixel_ordering_option_desc.setText(
+                self.sorting_functions[gui.cb_pixel_ordering_option.currentText()]                
+                )
+
+        gui.cb_pixel_ordering_option.currentIndexChanged.connect(lambda:
+            gui.t_pixel_ordering_option_desc.setText(
+                self.sorting_functions[gui.cb_pixel_ordering_option.currentText()]
+                )
+            )
+
             
     def gui_cb_interval_function_changed(self):
         '''Called whenever the user or program changes the option chosen in the combo box / dropdown.'''
         cb_text = self.gui.cb_interval_function.currentText()
         for func_object in self.sort_interval_functions.values():
             if cb_text == func_object.name_display:
+                self.gui.t_interval_function_desc.setText(func_object.desc)
+                
+                # TO DO: GO THROUGH AND SHOW / HIDE ASSOCIATED PARAMETERS!!!
+                #if func_object.associated_parameters:
+                    # SET UI PARAMETERS
                 # set description
                 # set helpers
                 break
@@ -393,27 +532,33 @@ class Sort_App():
         print(f"{what_to_print}")
 
 
+
+
     def show_image_picker(self, sorter_image_type="", label_wig=QtWidgets.QLabel):
         '''Opens the window to select an image in.
         Pass in how the image will be used ("main" or "mask") and the label widget that will display the thumbnail.'''
         
-        picker = QtWidgets.QFileDialog(self.gui)
-        # https://doc.qt.io/qtforpython/PySide2/QtWidgets/QFileDialog.html#PySide2.QtWidgets.PySide2.QtWidgets.QFileDialog.FileMode
-        
-        if sorter_image_type == "mask" and self.gui_active_mask_section == "folder":
-            picker.setFileMode(QtWidgets.QFileDialog.Directory)
+        children = self.gui.findChildren(QtWidgets.QFileDialog)
+        if children:
+            print("Dialog box already open. Preventing more occurrences.")
+
         else:
-            picker.setFileMode(QtWidgets.QFileDialog.ExistingFiles)
-            picker.setMimeTypeFilters(['image/jpeg', 'image/png', 'image/tiff', "application/octet-stream"])
-        p = str(Path().absolute())
-        picker.setDirectory(p)
-        picker.fileSelected.connect(lambda: self.images_picked(
-            picker_wig=picker, sorter_image_type=sorter_image_type, label_wig=label_wig)
-            )
-        picker.show()
+            picker = QtWidgets.QFileDialog(self.gui)
+            # https://doc.qt.io/qtforpython/PySide2/QtWidgets/QFileDialog.html#PySide2.QtWidgets.PySide2.QtWidgets.QFileDialog.FileMode
+            
+            if sorter_image_type == "mask" and self.gui_active_mask_section == "folder":
+                picker.setFileMode(QtWidgets.QFileDialog.Directory)
+            elif sorter_image_type == "main":
+                picker.setFileMode(QtWidgets.QFileDialog.ExistingFiles)
+                picker.setMimeTypeFilters(['image/jpeg', 'image/png', 'image/tiff', "application/octet-stream"])
+            p = str(Path().absolute())
+            picker.setDirectory(p)
+            picker.fileSelected.connect(lambda: self.images_picked(
+                picker_wig=picker, sorter_image_type=sorter_image_type, label_wig=label_wig)
+                )
+            picker.show()
 
-
-    def images_picked(self, picker_wig=QtWidgets.QFileDialog, sorter_image_type="", label_wig=QtWidgets.QLabel):
+    def images_picked(self, picker_wig, sorter_image_type, label_wig):
         '''Pass in a path to an image and the label widget that it show show up in.'''
         pic_urls = picker_wig.selectedFiles()
         if pic_urls:
@@ -436,7 +581,11 @@ class Sort_App():
             self.sorter_image_masks = imgs
             [sorter_image.generate_core_mask_sets() for sorter_image in self.sorter_images]     # Generates needed PIL images
             self.check_if_image_and_mask_image_share_a_path()
-            
+
+### DAVE TO DO:
+# Error is occuring when picking a mask first. Fix this pls.
+# Next: Have mask thumbnail show up in preview area.
+
             if self.gui_active_mask_section == "folder":
                 # add paths to scroll_area_found_masks widget
                 pass
@@ -453,8 +602,11 @@ class Sort_App():
             # self.l_loaded_image_preview.setMaximumSize(QtCore.QSize(200, 200))
         except:
             pass
-
-
+        
+        # Makes sure widget is removed from main gui so that if this funct is called again, it can
+        # prevent opening two dialog windows (not sure why this is a problem.)
+        picker_wig.setParent(None)
+        
         self.process_events()
     
     
@@ -464,6 +616,34 @@ class Sort_App():
             for mask in self.sorter_image_masks:
                 if mask.path in [img.path for img in self.sorter_images]:
                     self.sorter_image_masks.remove(mask)
+
+    def select_output_location(self):
+        '''Opens the window to select where the created image(s) will be saved in.'''
+
+        children = self.gui.findChildren(QtWidgets.QFileDialog)
+        if children:
+            print("Dialog box already open. Preventing more occurrences.")
+
+        else:
+
+            output_picker = QtWidgets.QFileDialog(self.gui)
+            output_picker.setFileMode(QtWidgets.QFileDialog.Directory)
+            p = str(Path().absolute())
+            output_picker.setDirectory(p)
+            output_picker.fileSelected.connect(lambda: self.output_location_selected(output_picker_wig=output_picker))
+            output_picker.show()
+
+    def output_location_selected(self, output_picker_wig=QtWidgets.QFileDialog):
+        '''Called when user chooses the folder to output to.'''
+        directory = output_picker_wig.selectedFiles()[0]      # SHOULD only return a Directory
+        self.output_dir = Path(directory)
+        self.gui.t_save_location_current.setText(str(self.output_dir.absolute()))
+
+        # Makes sure widget is removed from main gui so that if this funct is called again, it can
+        # prevent opening two dialog windows (not sure why this is a problem.)
+        output_picker_wig.setParent(None)
+
+        #del output_picker_wig
 
     def ultra_funct(self):
         sort_settings_list = []
@@ -572,24 +752,6 @@ class Sort_App():
         self.gui.show()
         self.app.exec_()
 
-
-'''
-class ImagePicker:
-    def __init__(self, ui):
-        self.ui = ui
-
-    def get_widget(self):
-        picker = QtWidgets.QFileDialog(self.ui)
-        # https://doc.qt.io/qtforpython/PySide2/QtWidgets/QFileDialog.html#PySide2.QtWidgets.PySide2.QtWidgets.QFileDialog.FileMode
-        picker.setFileMode(QtWidgets.QFileDialog.ExistingFiles)        # This works
-        #picker.setFileMode(QtWidgets.QFileDialog.Directory)            # This works
-
-        #picker.setMimeTypeFilters(['image/jpeg', 'image/png', 'image/bmp', 'image/tiff', 'image/gif', 'image/webp', QtWidgets.QFileDialog.Directory])
-        picker.setMimeTypeFilters(['image/jpeg', 'image/png', 'image/tiff', "application/octet-stream"])
-        #picker.setMimeTypeFilters("Images Files (*jpeg *png *tiff);;Directory (*)")
-        picker.show()
-        return picker
-'''
 
 if __name__ == '__main__':
     sa = Sort_App()
