@@ -335,6 +335,16 @@ class Sorter_Image():
         self.thumbnail = self.original.copy()
         self.thumbnail.thumbnail((200, 200))
 
+    def match_image_size(self, image_to_match):
+        '''Pass in a PIL object. Returns a PIL Image that matches the dimensions of the one passed in.'''
+        
+        image_resized = self.original.copy()
+        image_resized.resize(image_to_match.size)
+        
+        return image_resized
+
+
+    # I DON'T THINK I WILL END UP USING THIS:
     def generate_masks_from_associated_image(self):
         '''Sizes mask based on "associated" Sorter_Image object.'''
         # Masks make use of the "original" since they need to have corrisponding "full" images to match their associated image.
@@ -377,6 +387,15 @@ class Sorter_Image():
         
         return resized_w, resized_h
 
+
+    def get_picture_size(self, picture_size):
+        '''Picture size can be "full", "preview", or "fast". Returns the Image of the specificed size.'''
+        if picture_size == "full":
+            return self.full
+        elif picture_size == "preview":
+            return self.preview
+        elif picture_size == "fast":
+            return self.preview_fast       
         
 
 class Sort_Gui(QtWidgets.QMainWindow, sorter_gui):
@@ -499,7 +518,51 @@ class Sort_App():
                 )
             )
 
+        gui.b_generate_full.pressed.connect(lambda:
+            self.generate_sort(desired_picture_size="full")
+            )
+
+        gui.b_generate_preview.pressed.connect(lambda:
+            self.generate_sort(desired_picture_size="preview")
+            )
+
+
+
+    def generate_sort(self, desired_picture_size):
+        '''Starts the Pixel Sorting magic. desired_picture_size can be "full", "preview", or "fast".'''
+
+        # Collect images of the correct size
+        # Retreive parameter settings
+        # Pass in pixel sort
+
+        # Show output in correct location
+
+        for sorter_image in self.sorter_images:
+            image = sorter_image.get_picture_size(picture_size=desired_picture_size)
             
+            if self.gui.rb_mask_none.isChecked() or self.sorter_image_masks is None:       # If using a mask:
+                mask = None
+            else:
+                for sorter_mask  in self.sorter_image_masks:
+                    mask = sorter_mask.match_image_size(image_to_match=image)
+
+            image_sorted = pixelsort(
+                image=image,
+                mask_image=mask,
+                interval_image=None,
+                randomness=self.sort_parameters["randomness"].val_current,
+                clength=self.sort_parameters["clength"].val_current,
+                sorting_function=self.gui.cb_pixel_ordering_option.currentText(),
+                interval_function=self.gui.cb_interval_function.currentText(),
+                lower_threshold=self.sort_parameters["threshold_lower"].val_current,
+                upper_threshold=self.sort_parameters["threshold_upper"].val_current,
+                angle=self.sort_parameters["angle"].val_current
+                ).convert("RGB")    
+            #image_sorted_rgb = image_sorted.convert("RGB")
+            pix_map = image_sorted.toqpixmap()
+            self.gui.l_generated_image.setPixmap(pix_map)
+
+   
     def gui_cb_interval_function_changed(self):
         '''Called whenever the user or program changes the option chosen in the combo box / dropdown.'''
         cb_text = self.gui.cb_interval_function.currentText()
@@ -610,29 +673,42 @@ class Sort_App():
             # self.l_loaded_image_preview.setMaximumSize(QtCore.QSize(200, 200))
         except:
             pass
-        
+
+        self.process_events()
         # Makes sure widget is removed from main gui so that if this funct is called again, it can
         # prevent opening two dialog windows (not sure why this is a problem.)
-        picker_wig.setParent(None)
-        
-        self.process_events()
+        #picker_wig.setParent(None)
     
 
     def add_folder_text(self, associated_wig, img_path):
         '''Adds text to associated widget'''
         mask_label = QtWidgets.QLabel(associated_wig)
+        
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)  
         sizePolicy.setHeightForWidth(mask_label.sizePolicy().hasHeightForWidth())
         mask_label.setSizePolicy(sizePolicy)
         mask_label.setObjectName(f"t_found_mask_{img_path.stem}")
-        layout = associated_wig.layout()
-        layout.addWidget(mask_label)
-        # DAVE: NEED TO GET THE LAYOUT PROPERLY
-        children = associated_wig.children()
+        #layout = associated_wig.layout()
+        #layout.addWidget(mask_label)
+        # DAVE FIGURE OUT HOW TO ADD MULTIPLE MASKS
+        mask_label.setText(f"{img_path.stem}")
 
-        mask_label.setText(f"{img_path.stem}")      
+        associated_wig_name = associated_wig.objectName()
+        
+        child_names = [child.objectName() for child in associated_wig.children()]
+
+        vl_parent = self.gui.verticalLayout_9.parent()
+        vl_parent_widget = self.gui.verticalLayout_9.parentWidget()
+        
+        print(f"associated_wig_name: {associated_wig_name}\nchild_names: {child_names}\nvl_parent: {vl_parent}\nvl_parent_widget: {vl_parent_widget}")
+
+        self.gui.verticalLayout_9.addWidget(mask_label)
+
+
+           
+        self.process_events()
 
     def remove_folder_text(self, associated_wig):
         '''Removes all text in the associated widget'''
@@ -786,4 +862,3 @@ class Sort_App():
 
 if __name__ == '__main__':
     sa = Sort_App()
-    #sa.app_launch()
