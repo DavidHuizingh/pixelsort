@@ -208,13 +208,13 @@
              <item>
               <layout class="QHBoxLayout" name="hl_Image">
                <property name="leftMargin">
-                <number>0</number>
+                <number>2</number>
                </property>
                <property name="topMargin">
                 <number>2</number>
                </property>
                <property name="rightMargin">
-                <number>0</number>
+                <number>2</number>
                </property>
                <property name="bottomMargin">
                 <number>2</number>
@@ -363,28 +363,6 @@
               </layout>
              </item>
             </layout>
-           </item>
-           <item>
-            <widget class="Line" name="line_major_1">
-             <property name="windowModality">
-              <enum>Qt::NonModal</enum>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <property name="lineWidth">
-              <number>2</number>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
            </item>
            <item>
             <layout class="QVBoxLayout" name="vl_image_mask">
@@ -588,13 +566,13 @@
                  <number>6</number>
                 </property>
                 <property name="leftMargin">
-                 <number>0</number>
+                 <number>2</number>
                 </property>
                 <property name="topMargin">
                  <number>2</number>
                 </property>
                 <property name="rightMargin">
-                 <number>0</number>
+                 <number>2</number>
                 </property>
                 <property name="bottomMargin">
                  <number>2</number>
@@ -602,16 +580,16 @@
                 <item>
                  <layout class="QVBoxLayout" name="vl_mask_single_left">
                   <property name="leftMargin">
-                   <number>0</number>
+                   <number>1</number>
                   </property>
                   <property name="topMargin">
-                   <number>0</number>
+                   <number>1</number>
                   </property>
                   <property name="rightMargin">
-                   <number>0</number>
+                   <number>1</number>
                   </property>
                   <property name="bottomMargin">
-                   <number>0</number>
+                   <number>1</number>
                   </property>
                   <item>
                    <widget class="QPushButton" name="b_choose_mask">
@@ -894,11 +872,15 @@
                         </property>
                         <item row="0" column="0">
                          <layout class="QVBoxLayout" name="vl_found_masks">
-                          <property name="spacing">
-                           <number>2</number>
-                          </property>
                           <item>
-                           <spacer name="verticalSpacer_found_mask_area">
+                           <widget class="QLabel" name="found_mask_example">
+                            <property name="text">
+                             <string>TextLabel</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="verticalSpacer_10">
                             <property name="orientation">
                              <enum>Qt::Vertical</enum>
                             </property>
@@ -927,28 +909,6 @@
               </widget>
              </item>
             </layout>
-           </item>
-           <item>
-            <widget class="Line" name="line_major_2">
-             <property name="windowModality">
-              <enum>Qt::NonModal</enum>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <property name="lineWidth">
-              <number>2</number>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
            </item>
            <item>
             <layout class="QVBoxLayout" name="vl_interval_function">
@@ -1032,7 +992,7 @@
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>90</width>
+                   <width>80</width>
                    <height>0</height>
                   </size>
                  </property>
@@ -1081,11 +1041,11 @@
                   <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeType">
-                  <enum>QSizePolicy::Fixed</enum>
+                  <enum>QSizePolicy::Maximum</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>100</width>
+                   <width>74</width>
                    <height>20</height>
                   </size>
                  </property>
@@ -1094,13 +1054,7 @@
                <item>
                 <widget class="Line" name="line_3">
                  <property name="frameShadow">
-                  <enum>QFrame::Sunken</enum>
-                 </property>
-                 <property name="lineWidth">
-                  <number>2</number>
-                 </property>
-                 <property name="midLineWidth">
-                  <number>0</number>
+                  <enum>QFrame::Plain</enum>
                  </property>
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
@@ -1114,12 +1068,6 @@
                  </property>
                  <item>
                   <widget class="Line" name="line">
-                   <property name="frameShadow">
-                    <enum>QFrame::Sunken</enum>
-                   </property>
-                   <property name="lineWidth">
-                    <number>2</number>
-                   </property>
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
@@ -1210,28 +1158,6 @@
               </spacer>
              </item>
             </layout>
-           </item>
-           <item>
-            <widget class="Line" name="line_major_3">
-             <property name="windowModality">
-              <enum>Qt::NonModal</enum>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <property name="lineWidth">
-              <number>2</number>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
            </item>
            <item>
             <layout class="QVBoxLayout" name="vl_pixel_ordering">
@@ -1351,28 +1277,6 @@
               </layout>
              </item>
             </layout>
-           </item>
-           <item>
-            <widget class="Line" name="line_major_4">
-             <property name="windowModality">
-              <enum>Qt::NonModal</enum>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <property name="lineWidth">
-              <number>2</number>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
            </item>
            <item>
             <layout class="QVBoxLayout" name="vl_save_location">
@@ -2244,76 +2148,35 @@
        </item>
        <item>
         <widget class="Line" name="line_2">
-         <property name="frameShadow">
-          <enum>QFrame::Plain</enum>
-         </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="hl_image_preview">
-         <property name="leftMargin">
-          <number>0</number>
+        <widget class="QLabel" name="l_generated_image">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="topMargin">
-          <number>0</number>
+         <property name="maximumSize">
+          <size>
+           <width>1000</width>
+           <height>900</height>
+          </size>
          </property>
-         <property name="rightMargin">
-          <number>0</number>
+         <property name="text">
+          <string/>
          </property>
-         <property name="bottomMargin">
-          <number>0</number>
+         <property name="scaledContents">
+          <bool>true</bool>
          </property>
-         <item>
-          <widget class="QLabel" name="l_generated_image">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>200</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>1000</width>
-             <height>900</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_10">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Maximum</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>0</width>
-             <height>5</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer name="verticalSpacer_3">

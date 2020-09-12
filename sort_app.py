@@ -15,52 +15,6 @@ from Param_Slider import Param_Slider
 from Param_Clength import Param_Clength
 
 
-### CONFIG ###
-
-d_images = "images"
-i = "squirrel.jpg"
-#i = "DSC04688_EDIT_1000.jpg"
-p = Path()
-image_p_in = p / d_images / i
-
-
-mask_user_selection_options = ["None", "Single", "Folder"]
-mask_user_selection = "Single"
-mask_selected = "squirrel_mask_Inverted.jpg"
-
-
-d_masks = p / d_images / "Masks"
-p_masks = list(d_masks.glob("*.jpg"))
-
-
-### STATIC SETTINGS ###
-
-sort_settings_default = {
-    "mask_image" : None,                        # None Default             
-    "interval_image" : None,                    # None Default
-    "randomness": 0,                            # 0 Default
-    "clength": 50,                              # 50 Default
-    "sorting_function": "lightness",            # "lightness" Default               
-    "interval_function": "threshold",           # "threshold" Default
-    "lower_threshold": 0.25,                    # .25 Default
-    "upper_threshold": 0.8,                     # .8 Default
-    "angle": 0       
-}
-
-sort_settings = {
-    "mask_image" : None,                        # None Default             
-    "interval_image" : None,                    # None Default
-    "randomness": 0,                            # 0 Default
-    "clength": 250,                              # 50 Default
-    "sorting_function": "intensity",            # "lightness" Default               
-    "interval_function": "random",           # "threshold" Default
-    "lower_threshold": 0.4,                    # .25 Default
-    "upper_threshold": 0.7,                     # .8 Default
-    "angle": 270                                  # 0 Default
-    #"settings_changed_formatted" : None        # ADDED LATER
-    }
-
-
 class Option():
     def __init__(self):
         '''This class helps make data more accessable later.'''
@@ -76,11 +30,13 @@ class Option():
         self.slider_tick_interval = None
         #self.val_type = None
         self.associated_parameters = None       # if function
+        self.parameter_always_visible = None
         self.pw = None                          # pw (parameter widget) if parameter
         #self.parameter_widget = None
         self.slider_val = None                  #
+        self.app_ui_update_method = None            # Sort_App method to that should be called when these parameters are interacted with. 
 
-    def _setup(self, isParam, name, name_display, isEnabled, desc, val_default=None, val_range_min=None, val_range_max=None, slider_tick_interval=None, associated_parameters=None):
+    def _setup(self, isParam, name, name_display, isEnabled, desc, val_default=None, val_range_min=None, val_range_max=None, slider_tick_interval=None, associated_parameters=None, parameter_always_visible=None):
         '''Allows easy loading of settings.'''
         self.isParam = isParam
         self.name = name
@@ -93,12 +49,17 @@ class Option():
         self.val_range_max = val_range_max
         self.slider_tick_interval = slider_tick_interval
         self.associated_parameters = associated_parameters
+        self.parameter_always_visible = parameter_always_visible
 
-        
+    def set_visibility_parameter_widget(self, isVisible):
+        '''Allows a parameter to hide it's own widget.'''
+        self.pw.Frame.setVisible(isVisible)
 
-    def generate_param_widget(self, frame):
+
+    def generate_param_widget(self, frame, app_ui_update_method):
         '''Pass in a QFrame that this widget will be constructed in.
         Creates the parameter widget to be used in the UI.'''
+        self.app_ui_update_method = app_ui_update_method
 
         if self.name == "clength":
             self.pw = Param_Clength()
@@ -158,14 +119,22 @@ class Option():
                 self._update_slider_display_and_values(tb=self.pw.tb_param_generic_value)
                 self.pw.slider_param_generic.valueChanged.connect(lambda:
                     self._update_slider_display_and_values(tb=self.pw.tb_param_generic_value)
-                    )            
+                    )
+                # Only call UI update when RELEASED:
+                self.pw.slider_param_generic.sliderReleased.connect(lambda:
+                    self.app_ui_update_method()
+                    )              
             # SLIDER WITH NO TB:
             else:
                 self._update_slider_display_and_values()
                 self.pw.slider_param_generic.valueChanged.connect(lambda:
                     self._update_slider_display_and_values()
                     )
-        
+                # Only call UI update when RELEASED:
+                self.pw.slider_param_generic.sliderReleased.connect(lambda:
+                    self.app_ui_update_method()
+                    )
+    # SLIDERS BOXES:    
     def _update_slider_display_and_values(self, tb=None):
         '''Called whenever slider value changes.
         Applies any conversions needed, updates value displayed, and stores the value for when the pixel_sorter is called.'''
@@ -187,6 +156,7 @@ class Option():
         '''Throwaway method. Passes back value passed in. Hot potato.'''
         return slider_val
 
+    # TEXT BOXES:
     def _validate_tb_and_update_values(self, tb, slider=None):
         '''Pass in the text box that needs validating. It will also update the slider to the tb's value if one is passed in.
         This method makes sure text entered in box is numerical.'''
@@ -201,7 +171,9 @@ class Option():
 
             if slider is not None:
                 slider.setValue(self.val_current)
-
+                
+        # Calls app's method that updates UI
+        self.app_ui_update_method()        
 
 def _setup_all_sort_options():
     '''Sets up parameter, interval function, and sorting function options.
@@ -211,27 +183,32 @@ def _setup_all_sort_options():
     parameter_randomness = Option()
     parameter_randomness._setup(isParam=True, name="randomness", name_display="Randomness", isEnabled=True,
         desc="What percentage of intervals not to sort. 0 by default.",
-        val_default=0, val_range_min=0, val_range_max=100, slider_tick_interval=10, associated_parameters=None)
+        val_default=0, val_range_min=0, val_range_max=100, slider_tick_interval=10,
+        associated_parameters=None, parameter_always_visible=True)
 
     parameter_threshold_lower = Option()
     parameter_threshold_lower._setup(isParam=True, name="threshold_lower", name_display="Threshold - L", isEnabled=True,
         desc="How dark must a pixel be to be considered as a 'border' for sorting? Takes values from 0-1. 0.25 by default. Used in edges and threshold modes.",
-        val_default=.25, val_range_min=0, val_range_max=100, slider_tick_interval=10, associated_parameters=None)
+        val_default=.25, val_range_min=0, val_range_max=100, slider_tick_interval=10,
+        associated_parameters=None, parameter_always_visible=False)
 
     parameter_threshold_upper = Option()
     parameter_threshold_upper._setup(isParam=True, name="threshold_upper", name_display="Threshold - U", isEnabled=True,
         desc="How bright must a pixel be to be considered as a 'border' for sorting? Takes values from 0-1. 0.8 by default. Used in threshold mode.",
-        val_default=.8, val_range_min=0, val_range_max=100, slider_tick_interval=10, associated_parameters=None)
+        val_default=.8, val_range_min=0, val_range_max=100, slider_tick_interval=10,
+        associated_parameters=None, parameter_always_visible=False)
 
     parameter_clength = Option()
     parameter_clength._setup(isParam=True, name="clength", name_display="Characteristic Length", isEnabled=True,
         desc="Characteristic length for the random width generator. Used in mode random and waves.",
-        val_default=50, val_range_min=0, val_range_max=None, associated_parameters=None)
+        val_default=50, val_range_min=0, val_range_max=None,
+        associated_parameters=None, parameter_always_visible=False)
 
     parameter_angle = Option()
     parameter_angle._setup(isParam=True, name="angle", name_display="Angle", isEnabled=True,
         desc="Angle at which you're pixel sorting in degrees. 0 (horizontal) by default.",
-        val_default=0, val_range_min=0, val_range_max=360, slider_tick_interval=15, associated_parameters=None)
+        val_default=0, val_range_min=0, val_range_max=360, slider_tick_interval=15,
+        associated_parameters=None, parameter_always_visible=True)
 
     parameters_list = [
         parameter_randomness,
@@ -251,7 +228,7 @@ def _setup_all_sort_options():
     interval_func_random._setup(isParam=False, name="random", name_display="Random", isEnabled=True,
         desc="Randomly generate intervals. Distribution of widths is linear by default. Interval widths can be scaled using clength.",
         val_default=None, val_range_min=None, val_range_max=None,
-        associated_parameters=None) #clength
+        associated_parameters=[parameter_clength]) #clength
 
     interval_func_edges = Option()
     interval_func_edges._setup(isParam=False, name="edges", name_display="Edges", isEnabled=True,
@@ -269,25 +246,25 @@ def _setup_all_sort_options():
     interval_func_waves._setup(isParam=False, name="waves", name_display="Waves", isEnabled=True,
         desc="Intervals are waves of nearly uniform widths. Control width of waves with clength.",
         val_default=None, val_range_min=None, val_range_max=None,
-        associated_parameters=None) #clength
+        associated_parameters=[parameter_clength]) #clength
     # Disabled:
     interval_func_file = Option()
     interval_func_file._setup(isParam=False, name="file", name_display="File", isEnabled=False,
         desc="Intervals taken from another specified input image. Must be black and white, and the same size as the input image.",
         val_default=None, val_range_min=None, val_range_max=None,
-        associated_parameters=None)
+        associated_parameters=None) #???
     # Disabled:
     interval_func_file_edges = Option()
     interval_func_file_edges._setup(isParam=False, name="file-edges", name_display="File-Edges", isEnabled=False,
         desc="Intevals defined by performing edge detection on the file specified by -f. Must be the same size as the input image.",
         val_default=None, val_range_min=None, val_range_max=None,
-        associated_parameters=None)
+        associated_parameters=None) #???
 
     interval_func_none = Option()
     interval_func_none._setup(isParam=False, name="none", name_display="None", isEnabled=True,
         desc="Sort whole rows, only stopping at image borders.",
         val_default=None, val_range_min=None, val_range_max=None,
-        associated_parameters=None)
+        associated_parameters=None) #???
 
     interval_function_list = [
         interval_func_random,
@@ -434,13 +411,94 @@ class Sort_Gui(QtWidgets.QMainWindow, sorter_gui):
         self.setupUi(self)
 
 class Sort_App():
+
+    class Decorators():
+        # First time using decorators.
+        # The solution on how to use decorators in classes was inspired by this article:
+        # https://medium.com/@vadimpushtaev/decorator-inside-python-class-1e74d23107f6
+        # And extended in order to call Sort_App variables using this guide:
+        # https://stackoverflow.com/questions/7590682/access-self-from-decorator
+        
+        # TEMPLATE:
+        '''
+        @classmethod
+        def dec_name(cls_d, func):
+            def _dec_name(self, *args, **kwargs):
+
+                func_return = func(self, *args, **kwargs)
+                
+                return func_return
+            return _dec_name
+        '''
+        @classmethod
+        def fast_preview_check(cls_d, func):
+            def _fast_preview(self, *args, **kwargs):
+                print('''Decorator: "fast_preview_check" called''')
+                func_return = func(self, *args, **kwargs)
+                if not self.gui.cb_live_preview.isChecked():
+                    pass
+                else:   # is Checked
+                    try:
+                        self.generate_sorts(desired_picture_size="fast")
+                    except:
+                        print('''Decorator: "fast_preview_check" failed.''')
+                
+                return func_return
+            return _fast_preview
+
+
+        @classmethod
+        def image_size_warning_check(cls_d, func):
+            def _image_size_warning_check(self, *args, **kwargs):
+                print('''Decorator: "image_size_warning_check" called''')
+                func_return = func(self, *args, **kwargs)
+                # Relies on self.sorter_images.
+                try:
+                    first_image = self.sorter_images[0]
+                    image_size = first_image.full.size()
+                    if all(res > 2000 for res in image_size):      
+                        self.gui.t_image_size_warning_dynamic.setHidden(False)
+                        self.gui.t_image_size_warning_dynamic.setText(f'''*Warning: large image size ({image_size[0]}x{image_size[1]}). This will take a while to process. Consider checking the "preview" option.''')
+                    else:
+                        self.gui.t_image_size_warning_dynamic.setHidden(True)
+                except:
+                    self.gui.t_image_size_warning_dynamic.setHidden(True)
+
+                return func_return
+            return _image_size_warning_check
+
+        ### DECORATOR TESTS: ###
+        @classmethod
+        def dec_test_sort_app_variables(cls_d, func):
+            #passed_tp = self.passed_tp
+            def wrapper(self, *args, **kwargs):
+                #print(f"test_print = {passed_tp}")
+                #print(f"Self is {self}")
+                app_text = self.gui.t_image_size_warning_dynamic.text()
+                print(f"warning label text = {app_text}")
+                func_return = func(self, *args, **kwargs)
+                print("Ended")
+                return func_return
+            return wrapper
+
+        @classmethod
+        def dec_test(cls_d, func):
+            def wrapper(self, *args, **kwargs):
+                print("Started")
+                func_return = func(self, *args, **kwargs)
+                print("Ended")
+                return func_return
+            return wrapper
+
+    
+    
     def __init__(self):
         '''This is the main program running the application.'''
         # Declare variables
         # Create UI object
         # Run UI setup stuff
         # Launch GUID
-
+        self.test_print = 20
         all_options = _setup_all_sort_options()
         self.sort_parameters = all_options["parameters"]
         self.sort_interval_functions = all_options["interval functions"]
@@ -461,6 +519,7 @@ class Sort_App():
         self.setup_gui()
         self.app_launch()
 
+    @Decorators.image_size_warning_check
     def setup_gui(self):
         '''Links gui elements to actions'''
 
@@ -482,16 +541,17 @@ class Sort_App():
         gui.rb_mask_folder.clicked.connect(lambda: self.gui_mask_option_select())
         self.gui_mask_option_select()
 
-        gui.b_choose_image.pressed.connect(lambda: self.show_image_picker(
+        gui.b_choose_image.pressed
+        gui.b_choose_image.clicked.connect(lambda: self.show_image_picker(
             sorter_image_type="main", label_wig=gui.l_loaded_image_preview)
             )
-        gui.b_load_current.pressed.connect(lambda: self.make_sorter_image_from_sorted_image())
+        gui.b_load_current.clicked.connect(lambda: self.make_sorter_image_from_sorted_image())
 
 
-        gui.b_choose_mask.pressed.connect(lambda: self.show_image_picker(
+        gui.b_choose_mask.clicked.connect(lambda: self.show_image_picker(
             sorter_image_type="mask", label_wig=gui.l_loaded_mask_preview)
             )
-        gui.b_choose_mask_folder.pressed.connect(lambda: self.show_image_picker(
+        gui.b_choose_mask_folder.clicked.connect(lambda: self.show_image_picker(
             sorter_image_type="mask", label_wig=gui.l_loaded_mask_preview)
             )
         
@@ -512,12 +572,9 @@ class Sort_App():
             )
         
         gui.cb_interval_function.currentIndexChanged.connect(lambda:
-            gui.t_interval_function_desc.setText(
-                self.sort_interval_functions[gui.cb_interval_function.currentText()].desc                
-                )
+            self.gui_cb_interval_function_changed()
             )
         
-        gui.cb_interval_function.currentIndexChanged.connect(lambda: self.gui_cb_interval_function_changed())
 
         ### SETUP PARAMETERS
         
@@ -525,26 +582,33 @@ class Sort_App():
             # Creates a QFrame, parents it, adds it to the layout, and passes it into the parameter to generate the rest of the widget.
             frame = QtWidgets.QFrame(parent=self.gui.scroll_area_settings_content)
             self.gui.vl_parameters.addWidget(frame)
-            param_obj.generate_param_widget(frame=frame)
+            param_obj.generate_param_widget(frame=frame, app_ui_update_method=self.update_ui_from_param)
             
 
 
         ### SETUP PIXEL ORDERING
         # Similar setup to Interval Sorting Combo Box.
 
-        for name, desc in self.sorting_functions.items():
+        for name in self.sorting_functions.keys():
             gui.cb_pixel_ordering_option.addItem(name)
-            gui.cb_pixel_ordering_option.setToolTip(desc)
+            #gui.cb_pixel_ordering_option.setToolTip(desc)
 
         gui.t_pixel_ordering_option_desc.setText(
                 self.sorting_functions[gui.cb_pixel_ordering_option.currentText()]                
                 )
 
+
+        def pixel_ordering_option_changed():
+            # sorting_functions are simple dictionaries:
+            # "sort name" : "sort description"
+            sorting_option_desc = self.sorting_functions[gui.cb_pixel_ordering_option.currentText()]
+            self.gui.t_pixel_ordering_option_desc.setText(sorting_option_desc)
+            self.update_ui_from_param()
+
         gui.cb_pixel_ordering_option.currentIndexChanged.connect(lambda:
-            gui.t_pixel_ordering_option_desc.setText(
-                self.sorting_functions[gui.cb_pixel_ordering_option.currentText()]
-                )
+            pixel_ordering_option_changed()
             )
+
 
         ### IMAGE OUTPUTS
         gui.b_generate_pixel_sort.pressed.connect(lambda:
@@ -560,8 +624,20 @@ class Sort_App():
             self.open_in_native_viewer_handler(button_pressed=True)
             )
 
+        gui.cb_live_preview.clicked.connect(lambda:
+            self.update_ui_from_param()
+            )
+
+        self.gui_cb_interval_function_changed()
         # turns warning label off :)
         #self.image_size_warning_check()
+    
+    @Decorators.fast_preview_check
+    def update_ui_from_param(self):
+        '''This method gets passed into a parameter objct and
+        is called whenever the param's signals are triggered.'''
+
+        pass
 
     def open_in_native_viewer_handler(self, PIL_image=None, button_pressed=False):
         '''Checks to see if image should be opened in user's native image viewing app.'''
@@ -605,7 +681,9 @@ class Sort_App():
             while output_file_valid.exists():
                 i += 1
                 output_file_valid = self.output_file / f"_{i}"
-            output_file_valid.save(self.image_sorted)
+            
+            self.image_sorted.save(str(output_file_valid))
+            #output_file_valid.save(self.image_sorted)
         else:
             print("No images could be saved :(")
 
@@ -614,20 +692,30 @@ class Sort_App():
     def generate_sorts(self, desired_picture_size):
         '''Starts the Pixel Sorting magic. desired_picture_size can be "full", "preview", or "fast".'''
 
+        if self.gui.rb_mask_none.isChecked() or self.sorter_image_masks is None:
+            areMaskedUsed = False
+        else:
+            areMaskedUsed = True
+
         for sorter_image in self.sorter_images:
             image = sorter_image.get_picture_size(picture_size=desired_picture_size)
             
             # If "fast_preview" is on, only generates the first mask and skips the rest.
             if desired_picture_size == "fast":
-                sorter_mask = self.sorter_image_masks[0]
-                mask = sorter_mask.match_image_size(image_to_match=image)
+                if areMaskedUsed:       # Masks
+                    sorter_mask = self.sorter_image_masks[0]
+                    mask = sorter_mask.match_image_size(image_to_match=image)
+                else:                   # No Masks
+                    sorter_mask = None
+                    mask = None
+                
                 self.image_sort_create(
                     desired_picture_size=desired_picture_size,
                     sorter_image=sorter_image, sorter_mask=sorter_mask,
                     image=image, image_mask=mask)
 
             # If "full" or "preview" but doesn't have a mask:
-            elif self.gui.rb_mask_none.isChecked() or self.sorter_image_masks is None:       # If using a mask:
+            elif not areMaskedUsed:       # If using a mask:
                 self.image_sort_create(
                     desired_picture_size=desired_picture_size,
                     sorter_image=sorter_image, image=image)
@@ -649,12 +737,18 @@ class Sort_App():
 
     def image_sort_create(self, desired_picture_size, sorter_image, image, sorter_mask=None, image_mask=None):
         '''Sorts pixels, sets Pixmap, creates output file path (doesn't save). If no masks are used, don't pass in any masks.'''
+        
+        clength_full = self.sort_parameters["clength"].val_current
+        size_f = sorter_image.full.size[0]
+        size_desired = image.size[0]
+        clength_adjusted = int(clength_full / (size_f / size_desired))
+        
         image_sorted = pixelsort(
             image=image,
             mask_image=image_mask,
             interval_image=None,
             randomness=self.sort_parameters["randomness"].val_current,
-            clength=self.sort_parameters["clength"].val_current,
+            clength=clength_adjusted,
             sorting_function=self.gui.cb_pixel_ordering_option.currentText(),
             interval_function=self.gui.cb_interval_function.currentText(),
             lower_threshold=self.sort_parameters["threshold_lower"].val_current,
@@ -674,19 +768,26 @@ class Sort_App():
         self.output_file = self.output_dir / f"{sorter_image.path.stem}_{mask_str}{desired_picture_size}{sorter_image.path.suffix}"
         self.image_sorted = image_sorted
         return self.image_sorted
-   
+    
+    @Decorators.fast_preview_check
     def gui_cb_interval_function_changed(self):
         '''Called whenever the user or program changes the option chosen in the combo box / dropdown.'''
         cb_text = self.gui.cb_interval_function.currentText()
         for func_object in self.sort_interval_functions.values():
-            if cb_text == func_object.name_display:
+            if cb_text == func_object.name.lower():
                 self.gui.t_interval_function_desc.setText(func_object.desc)
                 
-                # TO DO: GO THROUGH AND SHOW / HIDE ASSOCIATED PARAMETERS!!!
-                #if func_object.associated_parameters:
-                    # SET UI PARAMETERS
-                # set description
-                # set helpers
+                # Turns "optional" widgets off and permanent widgets on
+                [param_obj.set_visibility_parameter_widget(param_obj.parameter_always_visible) for param_obj in self.sort_parameters.values()]
+                '''
+                for param_obj in self.sort_parameters.values():
+                        param_obj.set_visibility_parameter_widget(param_obj.parameter_always_visible)
+                '''
+                # Turns on associated parameters:
+                if func_object.associated_parameters is not None:
+                    for param_obj in func_object.associated_parameters:
+                        param_obj.set_visibility_parameter_widget(True)
+
                 break
             else:
                 pass
@@ -703,7 +804,7 @@ class Sort_App():
 
 
 
-    def show_image_picker(self, sorter_image_type="", label_wig=QtWidgets.QLabel):
+    def show_image_picker(self, sorter_image_type, label_wig):
         '''Opens the window to select an image in.
         Pass in how the image will be used ("main" or "mask") and the label widget that will display the thumbnail.'''
         
@@ -727,11 +828,18 @@ class Sort_App():
                 )
             picker.show()
 
+    def testing_print(self):
+        self.test_print = 29
 
+    
+    #@Decorators.dec_test
+    #@Decorators.dec_test_sort_app_variables
+    @Decorators.image_size_warning_check
     def images_picked(self, picker_wig, sorter_image_type, label_wig):
         '''Pass in a path to an image and the label widget that it show show up in.'''
         pic_urls = picker_wig.selectedFiles()
         picker_wig.setParent(None)
+        #self.gui.t_image_size_warning_dynamic.text()
 
         if pic_urls:
             # Checks if what user selected is a dir or files:
@@ -763,12 +871,14 @@ class Sort_App():
                 # add paths to scroll_area_found_masks widget
                 
                 self.remove_folder_text(associated_wig=self.gui.scroll_area_found_masks)
-                
-                
-                for sorter_mask in self.sorter_image_masks:
-                    self.add_folder_text(associated_wig=self.gui.scroll_area_found_masks, img_path=sorter_mask.path)
 
-                pass
+                # These are reversed only because I want them in alphabetical order :). As is, the list is already in
+                # alphabetical order, but I add them to the list from the bottom up so I can keep the spacer at the bottom.
+                for sorter_mask in reversed(self.sorter_image_masks):
+                    self.add_folder_text(associated_wig=self.gui.scroll_area_found_masks, img_path=sorter_mask.path)
+                    
+                    
+            
             elif self.gui_active_mask_section == "single":
                 first_img = self.sorter_image_masks[0]
 
@@ -781,7 +891,7 @@ class Sort_App():
             pass
         self.process_events()
 
-
+    @Decorators.image_size_warning_check
     def make_sorter_image_from_sorted_image(self):
         '''Takes the currently sorted image and makes it the new image that will be processed.'''
         try:
@@ -795,13 +905,29 @@ class Sort_App():
             # Sets preview
             pix_map = new_sorter_image.create_pixmap(new_sorter_image.thumbnail)
             self.gui.l_loaded_image_preview.setPixmap(pix_map)
-            self.gui.l_loaded_image_preview.setMaximumSize(QtCore.QSize(200, 200))        
+            #self.gui.l_loaded_image_preview.setMaximumSize(QtCore.QSize(200, 200))        
         except:
             print("Couldn't make new image from currently sorted image.")
 
     def add_folder_text(self, associated_wig, img_path):
         '''Adds text to associated widget'''
+        #name = associated_wig.objectName()
+        #parent_name = associated_wig.parentWidget().objectName()
+        
+        #vl_found_masks_name = self.gui.vl_found_masks.objectName()
+        #vl_found_masks_parent_name = self.gui.vl_found_masks.parentWidget().objectName()
+        
+        
         mask_label = QtWidgets.QLabel(associated_wig)
+        #QtWidgets.QLabel()
+        #mask_label = QtWidgets.QLabel("scrollArea")
+        #mask_label.setObjectName("test")
+        mask_label.setObjectName(f"t_found_mask_{img_path.stem}")
+        mask_label.setText(f"{img_path.name}")
+        self.gui.vl_found_masks.insertWidget(0, mask_label)
+
+        '''
+        mask_label = QtWidgets.QLabel()
         
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -814,27 +940,24 @@ class Sort_App():
         # DAVE FIGURE OUT HOW TO ADD MULTIPLE MASKS
         mask_label.setText(f"{img_path.stem}")
 
-        associated_wig_name = associated_wig.objectName()
-        
-        child_names = [child.objectName() for child in associated_wig.children()]
+        # TROUBLESHOOTING STUFF:
+        #associated_wig_name = associated_wig.objectName()
+        #child_names = [child.objectName() for child in associated_wig.children()]
+        #vl_parent = self.gui.verticalLayout_9.parent()
+        #vl_parent_widget = self.gui.verticalLayout_9.parentWidget()
+        #print(f"associated_wig_name: {associated_wig_name}\nchild_names: {child_names}\nvl_parent: {vl_parent}\nvl_parent_widget: {vl_parent_widget}")
 
-        vl_parent = self.gui.verticalLayout_9.parent()
-        vl_parent_widget = self.gui.verticalLayout_9.parentWidget()
-        
-        print(f"associated_wig_name: {associated_wig_name}\nchild_names: {child_names}\nvl_parent: {vl_parent}\nvl_parent_widget: {vl_parent_widget}")
-
-        self.gui.verticalLayout_9.addWidget(mask_label)
-
-
-           
-        self.process_events()
+        self.gui.vl_found_masks.addWidget(mask_label)
+        '''
+        #self.process_events()
 
     def remove_folder_text(self, associated_wig):
         '''Removes all text in the associated widget'''
-        children = associated_wig.children()
+        children = self.gui.scroll_area_found_masks.children()
         for child in children:
-            child.setParent(None)
-        
+            lbl_type = type(QtWidgets.QLabel)
+            if type(child) == QtWidgets.QLabel:
+                child.setParent(None)
 
     def check_if_image_and_mask_image_share_a_path(self):
         '''Checks if new images overlap with any previously selected images by comparing Paths.'''
@@ -868,122 +991,6 @@ class Sort_App():
         # Makes sure widget is removed from main gui so that if this funct is called again, it can
         # prevent opening two dialog windows (not sure why this is a problem.)
         output_picker_wig.setParent(None)
-
-    def image_size_warning_check(self, func):
-        '''Checks to see if the image warning label should show or not. Tested by retrieving the first image in self.sorter_images.'''           
-        def wrapper(*args, **kwargs):
-            x = func(*args, **kwargs)
-            try:
-                first_image = self.sorter_images[0]
-                image_size = first_image.full.size()
-                if all(res > 2000 for res in image_size):      
-                    self.gui.t_image_size_warning_dynamic.setHidden(False)
-                    self.gui.t_image_size_warning_dynamic.setText(f'''*Warning: large image size ({image_size[0]}x{image_size[1]}). This will take a while to process. Consider checking the "preview" option.''')
-                else:
-                    self.gui.t_image_size_warning_dynamic.setHidden(True)
-            except:
-                self.gui.t_image_size_warning_dynamic.setHidden(True)
-
-            return x
-        return wrapper
-
-
-
-
-    def ultra_funct(self):
-        sort_settings_list = []
-
-        if mask_user_selection == "None":
-            p_masks = None
-            sort_settings_list = [sort_settings.copy()]
-        elif mask_user_selection == "Single":
-            settings_with_mask = sort_settings.copy()
-            settings_with_mask["mask_image"] = p / d_images / "Masks" / mask_selected
-            sort_settings_list.append(settings_with_mask)
-        elif mask_user_selection == "Folder":
-            for p_mask in p_masks:
-                settings_with_mask = sort_settings.copy()
-                settings_with_mask["mask_image"] = p_mask
-                sort_settings_list.append(settings_with_mask)     
-        else:
-            print("error")
-
-        QtWidgets.QStackedWidget.changeEvent()
-        
-
-        '''
-        if not mask_user_selection in ["Single", "Folder"] or (["", None] in p_masks and sort_settings["mask_image"] == None):
-            # Not using masks:
-            p_masks = None
-            sort_settings_list = [sort_settings]
-        else:
-            # Using mask(s):
-            for p_mask in p_masks:
-                settings_with_mask = sort_settings.copy()
-                settings_with_mask["mask_image"] = p_mask
-                sort_settings_list.append(settings_with_mask)
-        '''
-
-        for settings in sort_settings_list:
-            settings_changed = {}
-            for s_name, s_df_val in sort_settings_default.items():
-                    s_val = settings[s_name]            
-                    if s_val != s_df_val:
-                        if s_name == "mask_image":
-                            try:
-                                s_val = s_val.stem
-                            except:
-                                s_val = "error"                
-                        print(f"{s_name} set to {s_val} (from {s_df_val}).")
-                        settings_changed[s_name] = s_val
-            
-            # take the changed settings and make a naming out of it.
-            settings_changed_formatted = "_".join([f"{name}-{val}" for name, val in settings_changed.items()])
-            # Adds a section to the sort_settings so that the name can be retreived later.
-            settings["settings_changed_formatted"] = settings_changed_formatted
-            print(f"Settings changed: {settings_changed_formatted}")
-
-
-        for settings in sort_settings_list:
-
-            settings_changed_formatted = settings["settings_changed_formatted"]
-            image_p_out = p / d_images / "SORTED" / f"{image_p_in.stem}_SORTED_{settings_changed_formatted}{image_p_in.suffix}"
-            img = Image.open(image_p_in)
-            try:
-                img_mask = Image.open(settings["mask_image"])
-            except:
-                img_mask = None
-
-            img_sorted = pixelsort(
-                img,
-                mask_image=img_mask,
-                interval_image=settings["interval_image"],
-                randomness=settings["randomness"],
-                clength=settings["clength"],
-                sorting_function=settings["sorting_function"],
-                interval_function=settings["interval_function"],
-                lower_threshold=settings["lower_threshold"],
-                upper_threshold=settings["upper_threshold"],
-                angle=settings["angle"]
-                )
-
-            #img_sorted = pixelsort(img, interval_function="edges", )
-
-            img_rgb = img_sorted.convert("RGB")
-            img_rgb.save(image_p_out)
-
-            # Loading PILLOW images directly into PyQt5 (without saving them)
-            # SHOULD WORK:
-            #qim = ImageQt.fromqimage(img_rgb)
-            #pix = QtGui.QPixmap.fromImage(qim)
-
-            print(f"Saved image path: {image_p_out.absolute()}")
-            sleep(1)
-            img_rgb.show()
-
-        #img_sorted = Image.SAVE("SORTED.jpg")
-
-        print("Done")
 
 
     def process_events(self):

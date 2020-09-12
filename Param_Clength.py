@@ -12,12 +12,20 @@ from PySide2 import QtCore, QtGui, QtWidgets
 
 class Param_Clength(object):
     def setupUi(self, Frame, param_name):
+        self.Frame = Frame
         Frame.setObjectName(f"f_param_{param_name}")
-        Frame.setFrameShape(QtWidgets.QFrame.Panel)
+        #Frame.setFrameShape(QtWidgets.QFrame.Panel)
         Frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.verticalLayout = QtWidgets.QVBoxLayout(Frame)
         self.verticalLayout.setContentsMargins(2, 2, 2, 2)
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.verticalLayout.setObjectName(f"vl_param_{param_name}")
+
+        self.line = QtWidgets.QFrame(Frame)
+        self.line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.line.setObjectName(f"line_{param_name}")
+        self.verticalLayout.addWidget(self.line)        
+
         self.hl_param_clength_t = QtWidgets.QHBoxLayout()
         self.hl_param_clength_t.setSpacing(10)
         self.hl_param_clength_t.setObjectName(f"hl_param_{param_name}_t")
