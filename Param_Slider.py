@@ -11,7 +11,7 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 
 class Param_Slider(object):
-    def setupUi(self, Frame, param_name):
+    def setupUi(self, Frame, param_name, is_value_display_tb=False):
         Frame.setObjectName(f"f_param_{param_name}")
         Frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.verticalLayout = QtWidgets.QVBoxLayout(Frame)
@@ -40,15 +40,31 @@ class Param_Slider(object):
         self.verticalLayout.addLayout(self.hl_param_generic_t)
         self.hl_param_generic_b = QtWidgets.QHBoxLayout()
         self.hl_param_generic_b.setObjectName(f"hl_param_{param_name}_b")
-        self.t_param_generic_value = QtWidgets.QLabel(Frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Maximum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.t_param_generic_value.sizePolicy().hasHeightForWidth())
-        self.t_param_generic_value.setSizePolicy(sizePolicy)
-        self.t_param_generic_value.setMinimumSize(QtCore.QSize(40, 0))
-        self.t_param_generic_value.setObjectName(f"t_param_{param_name}_value")
-        self.hl_param_generic_b.addWidget(self.t_param_generic_value)
+        
+        if is_value_display_tb:
+            self.tb_param_generic_value = QtWidgets.QLineEdit(Frame)
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+            sizePolicy.setHorizontalStretch(0)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(self.tb_param_generic_value.sizePolicy().hasHeightForWidth())
+            self.tb_param_generic_value.setSizePolicy(sizePolicy)
+            self.tb_param_generic_value.setMinimumSize(QtCore.QSize(20, 0))
+            self.tb_param_generic_value.setMaximumSize(QtCore.QSize(35, 16777215))
+            self.tb_param_generic_value.setText("")
+            self.tb_param_generic_value.setObjectName(f"tb_param_{param_name}")
+            self.hl_param_generic_b.addWidget(self.tb_param_generic_value)
+
+        else:   # Using Label:
+            self.t_param_generic_value = QtWidgets.QLabel(Frame)
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Maximum)
+            sizePolicy.setHorizontalStretch(0)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(self.t_param_generic_value.sizePolicy().hasHeightForWidth())
+            self.t_param_generic_value.setSizePolicy(sizePolicy)
+            self.t_param_generic_value.setMinimumSize(QtCore.QSize(40, 0))
+            self.t_param_generic_value.setObjectName(f"t_param_{param_name}_value")
+            self.hl_param_generic_b.addWidget(self.t_param_generic_value)
+
         self.slider_param_generic = QtWidgets.QSlider(Frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -64,7 +80,7 @@ class Param_Slider(object):
         self.hl_param_generic_b.addWidget(self.slider_param_generic)
         self.verticalLayout.addLayout(self.hl_param_generic_b)
 
-        self.retranslateUi(Frame)
+        #self.retranslateUi(Frame)
         QtCore.QMetaObject.connectSlotsByName(Frame)
 
     def retranslateUi(self, Frame):

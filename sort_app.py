@@ -101,7 +101,6 @@ class Option():
         Creates the parameter widget to be used in the UI.'''
 
         if self.name == "clength":
-            print("Need to set up rules for this widget boi")
             self.pw = Param_Clength()
             self.pw.setupUi(Frame=frame, param_name=self.name)
             self.pw.t_param_clength.setText(self.name_display)
@@ -111,16 +110,34 @@ class Option():
             self.pw.tb_param_clength.setValidator(q_validator)
             self.pw.tb_param_clength.setText(f"{self.val_default}")
 
-            self.pw.tb_param_clength.textChanged.connect(lambda:
-                self._validate_tb_and_update_values()
+            self.pw.tb_param_clength.editingFinished.connect(lambda:
+                self._validate_tb_and_update_values(tb=self.pw.tb_param_clength)
                 )
 
-        else:
+        else: #SLIDERS
             self.pw = Param_Slider()
-            self.pw.setupUi(Frame=frame, param_name=self.name)
+
+            # SLIDER WITH TB:
+            if self.name == "angle":
+                self.pw.setupUi(Frame=frame, param_name=self.name, is_value_display_tb=True)
+                # Setup textbox
+                self.pw.tb_param_generic_value.setText(str(self.val_default))
+                q_validator = QtGui.QIntValidator()
+                q_validator.setRange(self.val_range_min, self.val_range_max)
+                self.pw.tb_param_generic_value.setValidator(q_validator)
+                self.pw.tb_param_generic_value.editingFinished.connect(lambda:
+                    self._validate_tb_and_update_values(
+                        tb=self.pw.tb_param_generic_value,
+                        slider=self.pw.slider_param_generic)
+                        )
+            # SLIDER NO TB:
+            else:
+                self.pw.setupUi(Frame=frame, param_name=self.name)
+                self.pw.t_param_generic_value.setText(str(self.val_default))
+            
+            
             self.pw.t_param_generic.setText(self.name_display)
-            self.pw.t_param_generic_desc.setText(self.desc)
-            self.pw.t_param_generic_value.setText(str(self.val_default))
+            self.pw.t_param_generic_desc.setText(self.desc)            
             
             self.pw.slider_param_generic.setMinimum(self.val_range_min)
             self.pw.slider_param_generic.setMaximum(self.val_range_max)
@@ -135,20 +152,32 @@ class Option():
                 # Store method as object to be called later:
                 self.conversion_method = self._val_converter_none
                 self.pw.slider_param_generic.setValue(self.val_default)
-      
-            self._update_slider_display_and_values()
-            self.pw.slider_param_generic.valueChanged.connect(lambda:
+            
+            # SLIDER WITH TB:
+            if self.name == "angle":
+                self._update_slider_display_and_values(tb=self.pw.tb_param_generic_value)
+                self.pw.slider_param_generic.valueChanged.connect(lambda:
+                    self._update_slider_display_and_values(tb=self.pw.tb_param_generic_value)
+                    )            
+            # SLIDER WITH NO TB:
+            else:
                 self._update_slider_display_and_values()
-                )
+                self.pw.slider_param_generic.valueChanged.connect(lambda:
+                    self._update_slider_display_and_values()
+                    )
         
-    def _update_slider_display_and_values(self):
+    def _update_slider_display_and_values(self, tb=None):
         '''Called whenever slider value changes.
         Applies any conversions needed, updates value displayed, and stores the value for when the pixel_sorter is called.'''
         s_val = self.pw.slider_param_generic.value()
 
         # The magic of storing a method as an object happens here:
         self.val_current = self.conversion_method(s_val)
-        self.pw.t_param_generic_value.setText(str(self.val_current))
+
+        if tb is None:
+            self.pw.t_param_generic_value.setText(str(self.val_current))
+        else:
+            tb.setText(str(self.val_current))
 
     def _val_converter_threshold(self, slider_val):
         '''Converts slider value -> value within range. Method used by both parameter thresholds.'''
@@ -158,19 +187,20 @@ class Option():
         '''Throwaway method. Passes back value passed in. Hot potato.'''
         return slider_val
 
-    def _validate_tb_and_update_values(self):
-        '''Makes sure text entered in box is numerical.'''
+    def _validate_tb_and_update_values(self, tb, slider=None):
+        '''Pass in the text box that needs validating. It will also update the slider to the tb's value if one is passed in.
+        This method makes sure text entered in box is numerical.'''
         # The QIntValidator should force this value to be an int already.
-        tb_text = self.pw.tb_param_clength.text()
+        tb_text = tb.text()
         
         if tb_text in ["", None]:
             pass
         elif tb_text.isnumeric:
-            print(f"textbox text ({tb_text}) is numeric! Yay!")
+            #print(f"textbox text ({tb_text}) is numeric! Yay!")
             self.val_current = int(tb_text)
-        else:
-            print(f"textbox text ({tb_text}) is NOT numeric. Boooo.")
 
+            if slider is not None:
+                slider.setValue(self.val_current)
 
 
 def _setup_all_sort_options():
@@ -305,14 +335,17 @@ class Sorter_Image():
         self.original = None    # used for masks
 
 
-    def generate_image_sets(self):
+    def generate_image_sets(self, is_image_file=True):
         '''Creates thumbnail, preview, preview_fast, and full images'''
         '''
         img = Image.open(self.path)
         self.full = img.convert("RGB")      # ensures there is no alpha right from the start
         '''
-
-        self.full = Image.open(self.path)
+        if is_image_file:
+            self.full = Image.open(self.path)
+        else:
+            # If making a Sorter_Image from an unsaved image, the self.full needs to be set before this is called.
+            pass
         #self.full.convert("RGBA")
 
         self.thumbnail =  self.full.copy()
@@ -338,8 +371,8 @@ class Sorter_Image():
     def match_image_size(self, image_to_match):
         '''Pass in a PIL object. Returns a PIL Image that matches the dimensions of the one passed in.'''
         
-        image_resized = self.original.copy()
-        image_resized.resize(image_to_match.size)
+        #image_resized = self.original.copy()
+        image_resized = self.original.copy().resize(image_to_match.size)
         
         return image_resized
 
@@ -350,17 +383,14 @@ class Sorter_Image():
         # Masks make use of the "original" since they need to have corrisponding "full" images to match their associated image.
         self.original = Image.open(self.path)
 
-        self.full = self.original.copy()
-        self.full.resize(self.associated_main_image.full.size)
+        self.full = self.original.copy().resize(self.associated_main_image.full.size)
         
         #self.thumbnail = self.original.copy()
         #self.thumbnail.resize(self.associated_main_image.thumbnail.size)
 
-        self.preview_fast = self.original.copy()
-        self.preview_fast.resize(self.associated_main_image.preview_fast.size)
+        self.preview_fast = self.original.copy().resize(self.associated_main_image.preview_fast.size)
 
-        self.preview = self.original.copy()
-        self.preview.resize(self.associated_main_image.preview.size)
+        self.preview = self.original.copy().resize(self.associated_main_image.preview.size)
         
 
     def create_pixmap(self, pil_img):
@@ -455,23 +485,22 @@ class Sort_App():
         gui.b_choose_image.pressed.connect(lambda: self.show_image_picker(
             sorter_image_type="main", label_wig=gui.l_loaded_image_preview)
             )
+        gui.b_load_current.pressed.connect(lambda: self.make_sorter_image_from_sorted_image())
+
+
         gui.b_choose_mask.pressed.connect(lambda: self.show_image_picker(
             sorter_image_type="mask", label_wig=gui.l_loaded_mask_preview)
             )
         gui.b_choose_mask_folder.pressed.connect(lambda: self.show_image_picker(
             sorter_image_type="mask", label_wig=gui.l_loaded_mask_preview)
             )
-        gui.b_save_location.pressed.connect(lambda: self.select_output_location())
+        
+
+        gui.b_choose_save_location.pressed.connect(lambda: self.select_output_location())
         self.output_dir = Path(__file__).parent
         gui.t_save_location_current.setText(str(self.output_dir.absolute()))
 
         # Sets the interval functions drop down by cycling through interval_functions_dict:
-
-        '''
-        names = [func_object.name_display for func_object in self.sort_interval_functions.values()]
-        gui.cb_interval_function.addItems(names)
-        #gui.cb_interval_function.setCurrentIndex(0)
-        '''
 
         for func_object in self.sort_interval_functions.values():
             gui.cb_interval_function.addItem(func_object.name)
@@ -495,8 +524,7 @@ class Sort_App():
         for param_obj in self.sort_parameters.values():
             # Creates a QFrame, parents it, adds it to the layout, and passes it into the parameter to generate the rest of the widget.
             frame = QtWidgets.QFrame(parent=self.gui.scroll_area_settings_content)
-            self.gui.vl_interval_function.addWidget(frame)
-
+            self.gui.vl_parameters.addWidget(frame)
             param_obj.generate_param_widget(frame=frame)
             
 
@@ -518,50 +546,134 @@ class Sort_App():
                 )
             )
 
-        gui.b_generate_full.pressed.connect(lambda:
-            self.generate_sort(desired_picture_size="full")
+        ### IMAGE OUTPUTS
+        gui.b_generate_pixel_sort.pressed.connect(lambda:
+            self.pixel_sort_called()
             )
 
-        gui.b_generate_preview.pressed.connect(lambda:
-            self.generate_sort(desired_picture_size="preview")
+        gui.b_save_image.pressed.connect(lambda:
+            self.save_image_handler()
             )
 
+        ### OTHER
+        gui.b_open_in_native_viewer.pressed.connect(lambda:
+            self.open_in_native_viewer_handler(button_pressed=True)
+            )
+
+        # turns warning label off :)
+        #self.image_size_warning_check()
+
+    def open_in_native_viewer_handler(self, PIL_image=None, button_pressed=False):
+        '''Checks to see if image should be opened in user's native image viewing app.'''
+        # This method needs either an PIL image passed in, or for an output image file to have been saved.
+        if self.gui.cb_post_sort_option_picture_viewer.isChecked() or button_pressed:
+            try:
+                try:
+                    PIL_image = self.image_sorted
+                except:
+                    if PIL_image == None:
+                        PIL_image = Image.open(self.output_file)
+                PIL_image.show()
+            except:
+                pass
 
 
-    def generate_sort(self, desired_picture_size):
+    def fast_preview_handler(self):
+        '''Call this every time a fast preview might want to be generated.'''
+        if self.gui.cb_live_preview.isChecked():
+            if self.sorter_images != None:
+                self.generate_sorts(desired_picture_size="fast")
+
+    def pixel_sort_called(self):
+        '''Called whenever a button is pressed.'''
+        # Runs all the required methods in respect to user's settings and post-processed options.
+        if self.gui.cb_sort_option_preview.isChecked():
+            desired_picture_size = "preview"
+        else:
+            desired_picture_size = "full"
+        
+        self.generate_sorts(desired_picture_size=desired_picture_size)
+
+
+
+    def save_image_handler(self):
+        '''Called when the "save" button is pressed.'''
+        if self.output_file:
+            # Code below prevents overriding existing images:
+            output_file_valid = self.output_file
+            i = 0
+            while output_file_valid.exists():
+                i += 1
+                output_file_valid = self.output_file / f"_{i}"
+            output_file_valid.save(self.image_sorted)
+        else:
+            print("No images could be saved :(")
+
+
+
+    def generate_sorts(self, desired_picture_size):
         '''Starts the Pixel Sorting magic. desired_picture_size can be "full", "preview", or "fast".'''
-
-        # Collect images of the correct size
-        # Retreive parameter settings
-        # Pass in pixel sort
-
-        # Show output in correct location
 
         for sorter_image in self.sorter_images:
             image = sorter_image.get_picture_size(picture_size=desired_picture_size)
             
-            if self.gui.rb_mask_none.isChecked() or self.sorter_image_masks is None:       # If using a mask:
-                mask = None
+            # If "fast_preview" is on, only generates the first mask and skips the rest.
+            if desired_picture_size == "fast":
+                sorter_mask = self.sorter_image_masks[0]
+                mask = sorter_mask.match_image_size(image_to_match=image)
+                self.image_sort_create(
+                    desired_picture_size=desired_picture_size,
+                    sorter_image=sorter_image, sorter_mask=sorter_mask,
+                    image=image, image_mask=mask)
+
+            # If "full" or "preview" but doesn't have a mask:
+            elif self.gui.rb_mask_none.isChecked() or self.sorter_image_masks is None:       # If using a mask:
+                self.image_sort_create(
+                    desired_picture_size=desired_picture_size,
+                    sorter_image=sorter_image, image=image)
+                if self.gui.cb_post_sort_option_save_on_create.isChecked():
+                    self.save_image_handler()
+                    self.open_in_native_viewer_handler(PIL_image=self.image_sorted)
+
+            # "full" or "preview" with mask(s):
             else:
-                for sorter_mask  in self.sorter_image_masks:
+                for sorter_mask in self.sorter_image_masks:
                     mask = sorter_mask.match_image_size(image_to_match=image)
+                    self.image_sort_create(
+                        desired_picture_size=desired_picture_size,
+                        sorter_image=sorter_image, sorter_mask=sorter_mask,
+                        image=image, image_mask=mask)
+                    if self.gui.cb_post_sort_option_save_on_create.isChecked():
+                        self.save_image_handler()
+                        self.open_in_native_viewer_handler(PIL_image=self.image_sorted)
 
-            image_sorted = pixelsort(
-                image=image,
-                mask_image=mask,
-                interval_image=None,
-                randomness=self.sort_parameters["randomness"].val_current,
-                clength=self.sort_parameters["clength"].val_current,
-                sorting_function=self.gui.cb_pixel_ordering_option.currentText(),
-                interval_function=self.gui.cb_interval_function.currentText(),
-                lower_threshold=self.sort_parameters["threshold_lower"].val_current,
-                upper_threshold=self.sort_parameters["threshold_upper"].val_current,
-                angle=self.sort_parameters["angle"].val_current
-                ).convert("RGB")    
-            #image_sorted_rgb = image_sorted.convert("RGB")
-            pix_map = image_sorted.toqpixmap()
-            self.gui.l_generated_image.setPixmap(pix_map)
+    def image_sort_create(self, desired_picture_size, sorter_image, image, sorter_mask=None, image_mask=None):
+        '''Sorts pixels, sets Pixmap, creates output file path (doesn't save). If no masks are used, don't pass in any masks.'''
+        image_sorted = pixelsort(
+            image=image,
+            mask_image=image_mask,
+            interval_image=None,
+            randomness=self.sort_parameters["randomness"].val_current,
+            clength=self.sort_parameters["clength"].val_current,
+            sorting_function=self.gui.cb_pixel_ordering_option.currentText(),
+            interval_function=self.gui.cb_interval_function.currentText(),
+            lower_threshold=self.sort_parameters["threshold_lower"].val_current,
+            upper_threshold=self.sort_parameters["threshold_upper"].val_current,
+            angle=self.sort_parameters["angle"].val_current
+            ).convert("RGB")
+        #image_sorted_rgb = image_sorted.convert("RGB")
+        pix_map = image_sorted.toqpixmap()
+        self.gui.l_generated_image.setPixmap(pix_map)
+        self.process_events()
 
+        # Sets up the output file for the "save" function.
+        if image_mask is None:
+            mask_str = ""
+        else:
+            mask_str = f"Mask-{sorter_mask.path.stem}_"
+        self.output_file = self.output_dir / f"{sorter_image.path.stem}_{mask_str}{desired_picture_size}{sorter_image.path.suffix}"
+        self.image_sorted = image_sorted
+        return self.image_sorted
    
     def gui_cb_interval_function_changed(self):
         '''Called whenever the user or program changes the option chosen in the combo box / dropdown.'''
@@ -590,11 +702,6 @@ class Sort_App():
                 self.gui_active_mask_section = section
 
 
-    def test(self, what_to_print="not set"):
-        print(f"{what_to_print}")
-
-
-
 
     def show_image_picker(self, sorter_image_type="", label_wig=QtWidgets.QLabel):
         '''Opens the window to select an image in.
@@ -619,6 +726,7 @@ class Sort_App():
                 picker_wig=picker, sorter_image_type=sorter_image_type, label_wig=label_wig)
                 )
             picker.show()
+
 
     def images_picked(self, picker_wig, sorter_image_type, label_wig):
         '''Pass in a path to an image and the label widget that it show show up in.'''
@@ -669,16 +777,27 @@ class Sort_App():
             pix_map = first_img.create_pixmap(first_img.thumbnail)
             label_wig.setPixmap(pix_map)
             label_wig.setMaximumSize(QtCore.QSize(200, 200))
-            
-            # self.l_loaded_image_preview.setMaximumSize(QtCore.QSize(200, 200))
         except:
             pass
-
         self.process_events()
-        # Makes sure widget is removed from main gui so that if this funct is called again, it can
-        # prevent opening two dialog windows (not sure why this is a problem.)
-        #picker_wig.setParent(None)
-    
+
+
+    def make_sorter_image_from_sorted_image(self):
+        '''Takes the currently sorted image and makes it the new image that will be processed.'''
+        try:
+            sorter_image =self.sorter_images[0]
+            new_sorter_image = Sorter_Image(img_file_path=sorter_image.path, sorter_img_type=sorter_image.type)
+            # Loads PIL sorted image to Sorter_Images's "full" area
+            new_sorter_image.full = self.image_sorted
+            new_sorter_image.generate_image_sets(is_image_file=False)
+            self.sorter_images=[new_sorter_image]
+            
+            # Sets preview
+            pix_map = new_sorter_image.create_pixmap(new_sorter_image.thumbnail)
+            self.gui.l_loaded_image_preview.setPixmap(pix_map)
+            self.gui.l_loaded_image_preview.setMaximumSize(QtCore.QSize(200, 200))        
+        except:
+            print("Couldn't make new image from currently sorted image.")
 
     def add_folder_text(self, associated_wig, img_path):
         '''Adds text to associated widget'''
@@ -745,12 +864,31 @@ class Sort_App():
         directory = output_picker_wig.selectedFiles()[0]      # SHOULD only return a Directory
         self.output_dir = Path(directory)
         self.gui.t_save_location_current.setText(str(self.output_dir.absolute()))
-
+        
         # Makes sure widget is removed from main gui so that if this funct is called again, it can
         # prevent opening two dialog windows (not sure why this is a problem.)
         output_picker_wig.setParent(None)
 
-        #del output_picker_wig
+    def image_size_warning_check(self, func):
+        '''Checks to see if the image warning label should show or not. Tested by retrieving the first image in self.sorter_images.'''           
+        def wrapper(*args, **kwargs):
+            x = func(*args, **kwargs)
+            try:
+                first_image = self.sorter_images[0]
+                image_size = first_image.full.size()
+                if all(res > 2000 for res in image_size):      
+                    self.gui.t_image_size_warning_dynamic.setHidden(False)
+                    self.gui.t_image_size_warning_dynamic.setText(f'''*Warning: large image size ({image_size[0]}x{image_size[1]}). This will take a while to process. Consider checking the "preview" option.''')
+                else:
+                    self.gui.t_image_size_warning_dynamic.setHidden(True)
+            except:
+                self.gui.t_image_size_warning_dynamic.setHidden(True)
+
+            return x
+        return wrapper
+
+
+
 
     def ultra_funct(self):
         sort_settings_list = []
