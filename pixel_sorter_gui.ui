@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>976</width>
-    <height>929</height>
+    <width>1031</width>
+    <height>859</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -106,8 +106,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>464</width>
-            <height>899</height>
+            <width>479</width>
+            <height>829</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -875,7 +875,7 @@
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>320</width>
+                         <width>335</width>
                          <height>69</height>
                         </rect>
                        </property>
@@ -2235,10 +2235,59 @@
         <layout class="QHBoxLayout" name="hl_image_preview_top">
          <item>
           <widget class="QCheckBox" name="cb_live_preview">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>Live Preview</string>
            </property>
           </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <property name="spacing">
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="t_image_preview_orig_name_dyn">
+             <property name="font">
+              <font>
+               <italic>true</italic>
+              </font>
+             </property>
+             <property name="text">
+              <string>(image name)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="t_image_preview_sizes_dyn">
+             <property name="font">
+              <font>
+               <italic>true</italic>
+              </font>
+             </property>
+             <property name="text">
+              <string>(image size)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="t_image_preview_ratio_dyn">
+             <property name="font">
+              <font>
+               <italic>true</italic>
+              </font>
+             </property>
+             <property name="text">
+              <string>(image ratio)</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>

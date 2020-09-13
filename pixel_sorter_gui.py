@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'f:\GitHub\pixelsort\pixel_sorter_gui.ui',
 # licensing of 'f:\GitHub\pixelsort\pixel_sorter_gui.ui' applies.
 #
-# Created: Sat Sep 12 16:47:16 2020
+# Created: Sun Sep 13 11:04:00 2020
 #      by: pyside2-uic  running on PySide2 5.12.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(976, 929)
+        MainWindow.resize(1031, 859)
         MainWindow.setMaximumSize(QtCore.QSize(1500, 1000))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -49,7 +49,7 @@ class Ui_MainWindow(object):
         self.scroll_area_settings.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.scroll_area_settings.setObjectName("scroll_area_settings")
         self.scroll_area_settings_content = QtWidgets.QWidget()
-        self.scroll_area_settings_content.setGeometry(QtCore.QRect(0, 0, 464, 899))
+        self.scroll_area_settings_content.setGeometry(QtCore.QRect(0, 0, 479, 829))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -357,7 +357,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scroll_area_found_masks = QtWidgets.QWidget()
-        self.scroll_area_found_masks.setGeometry(QtCore.QRect(0, 0, 320, 69))
+        self.scroll_area_found_masks.setGeometry(QtCore.QRect(0, 0, 335, 69))
         self.scroll_area_found_masks.setObjectName("scroll_area_found_masks")
         self.gridLayout = QtWidgets.QGridLayout(self.scroll_area_found_masks)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -909,8 +909,35 @@ class Ui_MainWindow(object):
         self.hl_image_preview_top = QtWidgets.QHBoxLayout()
         self.hl_image_preview_top.setObjectName("hl_image_preview_top")
         self.cb_live_preview = QtWidgets.QCheckBox(self.f_preview_panel)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.cb_live_preview.sizePolicy().hasHeightForWidth())
+        self.cb_live_preview.setSizePolicy(sizePolicy)
         self.cb_live_preview.setObjectName("cb_live_preview")
         self.hl_image_preview_top.addWidget(self.cb_live_preview)
+        self.verticalLayout_7 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_7.setSpacing(6)
+        self.verticalLayout_7.setObjectName("verticalLayout_7")
+        self.t_image_preview_orig_name_dyn = QtWidgets.QLabel(self.f_preview_panel)
+        font = QtGui.QFont()
+        font.setItalic(True)
+        self.t_image_preview_orig_name_dyn.setFont(font)
+        self.t_image_preview_orig_name_dyn.setObjectName("t_image_preview_orig_name_dyn")
+        self.verticalLayout_7.addWidget(self.t_image_preview_orig_name_dyn)
+        self.t_image_preview_sizes_dyn = QtWidgets.QLabel(self.f_preview_panel)
+        font = QtGui.QFont()
+        font.setItalic(True)
+        self.t_image_preview_sizes_dyn.setFont(font)
+        self.t_image_preview_sizes_dyn.setObjectName("t_image_preview_sizes_dyn")
+        self.verticalLayout_7.addWidget(self.t_image_preview_sizes_dyn)
+        self.t_image_preview_ratio_dyn = QtWidgets.QLabel(self.f_preview_panel)
+        font = QtGui.QFont()
+        font.setItalic(True)
+        self.t_image_preview_ratio_dyn.setFont(font)
+        self.t_image_preview_ratio_dyn.setObjectName("t_image_preview_ratio_dyn")
+        self.verticalLayout_7.addWidget(self.t_image_preview_ratio_dyn)
+        self.hl_image_preview_top.addLayout(self.verticalLayout_7)
         self.verticalLayout_2.addLayout(self.hl_image_preview_top)
         self.line_2 = QtWidgets.QFrame(self.f_preview_panel)
         self.line_2.setFrameShadow(QtWidgets.QFrame.Plain)
@@ -1011,6 +1038,9 @@ class Ui_MainWindow(object):
         self.t_save_location_current.setText(QtWidgets.QApplication.translate("MainWindow", "(save location)", None, -1))
         self.b_choose_save_location.setText(QtWidgets.QApplication.translate("MainWindow", "...", None, -1))
         self.cb_live_preview.setText(QtWidgets.QApplication.translate("MainWindow", "Live Preview", None, -1))
+        self.t_image_preview_orig_name_dyn.setText(QtWidgets.QApplication.translate("MainWindow", "(image name)", None, -1))
+        self.t_image_preview_sizes_dyn.setText(QtWidgets.QApplication.translate("MainWindow", "(image size)", None, -1))
+        self.t_image_preview_ratio_dyn.setText(QtWidgets.QApplication.translate("MainWindow", "(image ratio)", None, -1))
         self.b_open_in_native_viewer.setText(QtWidgets.QApplication.translate("MainWindow", "Open in Viewer", None, -1))
         self.actionhi.setText(QtWidgets.QApplication.translate("MainWindow", "hi", None, -1))
 

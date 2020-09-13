@@ -12,3 +12,25 @@ venv
 
 #Output images in root (examples are not ignored)
 /*.png
+squirrel_Mask-squirrel_mask_Inverted_full.jpg
+squirrel_Mask-squirrel_mask_full.jpg
+squirrel_Mask-Head triangle_Inverted_full.jpg
+squirrel_Mask-Head triangle_full.jpg
+squirrel_Mask-Head circle_Inverted_full.jpg
+squirrel_Mask-Head circle_full.jpg
+squirrel_Mask-Eyeballs_Inverted_full.jpg
+squirrel_Mask-Eyeballs_full.jpg
+squirrel_Mask-Eye Bar_Inverted_full.jpg
+squirrel_Mask-Eye Bar_full.jpg
+images/TEST/squirrel_Mask-squirrel_mask_Inverted_full.jpg
+images/TEST/squirrel_Mask-squirrel_mask_full.jpg
+images/TEST/squirrel_Mask-Head triangle_Inverted_full.jpg
+images/TEST/squirrel_Mask-Head triangle_full.jpg
+images/TEST/squirrel_Mask-Head circle_Inverted_full.jpg
+images/TEST/squirrel_Mask-Head circle_full.jpg
+images/TEST/squirrel_Mask-Eyeballs_Inverted_full.jpg
+images/TEST/squirrel_Mask-Eyeballs_full.jpg
+images/TEST/squirrel_Mask-Eye Bar_Inverted_full.jpg
+images/TEST/squirrel_Mask-Eye Bar_full.jpg
+images/DSC04853_EDIT.JPG
+images/DSC04794.JPG

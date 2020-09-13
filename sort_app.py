@@ -15,6 +15,11 @@ from Param_Slider import Param_Slider
 from Param_Clength import Param_Clength
 
 
+dev_debug = True
+#debug_image_main = "images/squirrel.jpg"
+debug_image_main = "images/DSC04688.JPG"
+debug_image_mask = "images/Masks/Head circle_Inverted.jpg"
+
 class Option():
     def __init__(self):
         '''This class helps make data more accessable later.'''
@@ -455,14 +460,23 @@ class Sort_App():
                 # Relies on self.sorter_images.
                 try:
                     first_image = self.sorter_images[0]
-                    image_size = first_image.full.size()
-                    if all(res > 2000 for res in image_size):      
-                        self.gui.t_image_size_warning_dynamic.setHidden(False)
-                        self.gui.t_image_size_warning_dynamic.setText(f'''*Warning: large image size ({image_size[0]}x{image_size[1]}). This will take a while to process. Consider checking the "preview" option.''')
+                except:
+                    first_image = None
+                if first_image:
+                    image_size = first_image.full.size
+                    if all(res > 2000 for res in image_size):
+                        warning_label = self.gui.t_image_size_warning_dynamic   
+                        warning_label.setHidden(False)
+                        warning_label.setText(f'''*Warning: large image size ({image_size[0]}x{image_size[1]}). This will take a while to process. Consider checking the "preview" option.''')
+
+                        # If the preview option is checked, this warning will be "striked out":
+                        f = warning_label.font()
+                        f.setStrikeOut(self.gui.cb_sort_option_preview.isChecked())
+                        warning_label.setFont(f)
                     else:
                         self.gui.t_image_size_warning_dynamic.setHidden(True)
-                except:
-                    self.gui.t_image_size_warning_dynamic.setHidden(True)
+                #except:
+                #    self.gui.t_image_size_warning_dynamic.setHidden(True)
 
                 return func_return
             return _image_size_warning_check
@@ -517,7 +531,29 @@ class Sort_App():
         self.app = QtWidgets.QApplication(sys.argv)
         self.gui = Sort_Gui()
         self.setup_gui()
+        if dev_debug:
+            self.setup_debugging()
         self.app_launch()
+
+    def setup_debugging(self):
+        '''Developer options'''
+
+        def load_image_main():
+            self.images_picked(picker_wig=None,
+                sorter_image_type="main",
+                label_wig=self.gui.l_loaded_image_preview,
+                debug_override_images=[debug_image_main]
+                )
+        def load_image_mask():
+            self.images_picked(picker_wig=None,
+                sorter_image_type="mask",
+                label_wig=self.gui.l_loaded_mask_preview,
+                debug_override_images=[debug_image_mask]
+                )
+
+        load_image_main()
+        load_image_mask()
+
 
     @Decorators.image_size_warning_check
     def setup_gui(self):
@@ -629,15 +665,44 @@ class Sort_App():
             )
 
         self.gui_cb_interval_function_changed()
-        # turns warning label off :)
-        #self.image_size_warning_check()
+
+        
+        gui.cb_sort_option_preview.clicked.connect(lambda:
+            self.update_ui_from_param()
+            )
+
+        self.update_ui_preview_label_size()
+
     
     @Decorators.fast_preview_check
+    @Decorators.image_size_warning_check
     def update_ui_from_param(self):
         '''This method gets passed into a parameter objct and
         is called whenever the param's signals are triggered.'''
-
         pass
+
+    def update_ui_preview_label_size(self, original_img=None, sorted_img=None, img_name = None):
+        '''Updates the UI to display information about the image's resolution.
+        If parameters are incomplete, text will be set to "------".'''
+        
+        blank = "-------"        
+        if img_name is None:
+            img_name = blank        
+        
+        try:
+            size_original, size_display = (f"{original_img.size[0]}x{original_img.size[1]}", f"{sorted_img.size[0]}x{sorted_img.size[1]}")
+        except:
+            size_original, size_display = (blank, blank)
+        
+        try:
+            image_ratio = (sorted_img.size[0] / original_img.size[0])
+        except:
+            image_ratio = blank
+        
+        self.gui.t_image_preview_orig_name_dyn.setText(f'''Image Name: {img_name}''')
+        self.gui.t_image_preview_sizes_dyn.setText(f'''Sizes:\n- original ({size_original}),\n- displayed ({size_display})''')
+        self.gui.t_image_preview_ratio_dyn.setText(f'''Displayed Ratio: {image_ratio}''')
+
 
     def open_in_native_viewer_handler(self, PIL_image=None, button_pressed=False):
         '''Checks to see if image should be opened in user's native image viewing app.'''
@@ -766,31 +831,33 @@ class Sort_App():
         else:
             mask_str = f"Mask-{sorter_mask.path.stem}_"
         self.output_file = self.output_dir / f"{sorter_image.path.stem}_{mask_str}{desired_picture_size}{sorter_image.path.suffix}"
+        
+        self.update_ui_preview_label_size(
+            original_img=sorter_image.full,
+            sorted_img=image_sorted,
+            img_name=sorter_image.path.name)
+        
+        
         self.image_sorted = image_sorted
         return self.image_sorted
     
     @Decorators.fast_preview_check
     def gui_cb_interval_function_changed(self):
-        '''Called whenever the user or program changes the option chosen in the combo box / dropdown.'''
+        '''Called whenever the user or program changes the option chosen in the combo box / dropdown.
+        Sets the visibility of the parameters based on the option chosen.'''
         cb_text = self.gui.cb_interval_function.currentText()
         for func_object in self.sort_interval_functions.values():
             if cb_text == func_object.name.lower():
                 self.gui.t_interval_function_desc.setText(func_object.desc)
-                
                 # Turns "optional" widgets off and permanent widgets on
                 [param_obj.set_visibility_parameter_widget(param_obj.parameter_always_visible) for param_obj in self.sort_parameters.values()]
-                '''
-                for param_obj in self.sort_parameters.values():
-                        param_obj.set_visibility_parameter_widget(param_obj.parameter_always_visible)
-                '''
+
                 # Turns on associated parameters:
                 if func_object.associated_parameters is not None:
                     for param_obj in func_object.associated_parameters:
                         param_obj.set_visibility_parameter_widget(True)
-
                 break
-            else:
-                pass
+
 
     def gui_mask_option_select(self):
         '''Finds the radio button selected and changes the mask frame that match the selection.'''
@@ -801,7 +868,6 @@ class Sort_App():
             # updates the active section variable
             if radio.isChecked():
                 self.gui_active_mask_section = section
-
 
 
     def show_image_picker(self, sorter_image_type, label_wig):
@@ -828,17 +894,16 @@ class Sort_App():
                 )
             picker.show()
 
-    def testing_print(self):
-        self.test_print = 29
-
-    
-    #@Decorators.dec_test
-    #@Decorators.dec_test_sort_app_variables
     @Decorators.image_size_warning_check
-    def images_picked(self, picker_wig, sorter_image_type, label_wig):
+    def images_picked(self, picker_wig, sorter_image_type, label_wig, debug_override_images=None):
         '''Pass in a path to an image and the label widget that it show show up in.'''
-        pic_urls = picker_wig.selectedFiles()
-        picker_wig.setParent(None)
+        
+        if not debug_override_images:
+            pic_urls = picker_wig.selectedFiles()
+            picker_wig.setParent(None)
+        
+        else:
+            pic_urls = debug_override_images
         #self.gui.t_image_size_warning_dynamic.text()
 
         if pic_urls:
@@ -922,7 +987,6 @@ class Sort_App():
         '''Removes all text in the associated widget'''
         children = self.gui.scroll_area_found_masks.children()
         for child in children:
-            lbl_type = type(QtWidgets.QLabel)
             if type(child) == QtWidgets.QLabel:
                 child.setParent(None)
 
