@@ -911,45 +911,12 @@ class Sort_App():
 
     def add_folder_text(self, associated_wig, img_path):
         '''Adds text to associated widget'''
-        #name = associated_wig.objectName()
-        #parent_name = associated_wig.parentWidget().objectName()
-        
-        #vl_found_masks_name = self.gui.vl_found_masks.objectName()
-        #vl_found_masks_parent_name = self.gui.vl_found_masks.parentWidget().objectName()
-        
-        
+
         mask_label = QtWidgets.QLabel(associated_wig)
-        #QtWidgets.QLabel()
-        #mask_label = QtWidgets.QLabel("scrollArea")
-        #mask_label.setObjectName("test")
         mask_label.setObjectName(f"t_found_mask_{img_path.stem}")
         mask_label.setText(f"{img_path.name}")
         self.gui.vl_found_masks.insertWidget(0, mask_label)
 
-        '''
-        mask_label = QtWidgets.QLabel()
-        
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)  
-        sizePolicy.setHeightForWidth(mask_label.sizePolicy().hasHeightForWidth())
-        mask_label.setSizePolicy(sizePolicy)
-        mask_label.setObjectName(f"t_found_mask_{img_path.stem}")
-        #layout = associated_wig.layout()
-        #layout.addWidget(mask_label)
-        # DAVE FIGURE OUT HOW TO ADD MULTIPLE MASKS
-        mask_label.setText(f"{img_path.stem}")
-
-        # TROUBLESHOOTING STUFF:
-        #associated_wig_name = associated_wig.objectName()
-        #child_names = [child.objectName() for child in associated_wig.children()]
-        #vl_parent = self.gui.verticalLayout_9.parent()
-        #vl_parent_widget = self.gui.verticalLayout_9.parentWidget()
-        #print(f"associated_wig_name: {associated_wig_name}\nchild_names: {child_names}\nvl_parent: {vl_parent}\nvl_parent_widget: {vl_parent_widget}")
-
-        self.gui.vl_found_masks.addWidget(mask_label)
-        '''
-        #self.process_events()
 
     def remove_folder_text(self, associated_wig):
         '''Removes all text in the associated widget'''
