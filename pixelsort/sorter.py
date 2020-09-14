@@ -40,7 +40,7 @@ def sort_image(
 
 
     #with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    with concurrent.futures.ProcessPoolExecutor() as executor:
         #future_to_index = dict((executor.submit(sort_row, y, ("PUT ARGS HERE")), y) for y in range(size[1]))
         
         future_to_index = {}          # key: future, value: index         
@@ -83,8 +83,6 @@ def sort_row(y_section, intervals, size, mask_data, image_data, randomness, sort
                 row += sort_interval(interval, sorting_function)
             x_min = x_max
         row_chunk.append(row)
-
-        #print(f"Thread completed for Y = {y}")
     print(f"Completed work on {section_name}")
     return row_chunk
 
