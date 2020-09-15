@@ -7,7 +7,7 @@
 #      by: pyside2-uic  running on PySide2 5.12.2
 #
 # WARNING! All changes made in this file will be lost!
-
+#if __name__ == "__main__":
 from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):

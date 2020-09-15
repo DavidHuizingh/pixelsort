@@ -2,11 +2,11 @@ import random
 
 from time import time
 import concurrent.futures
-
+from PIL import Image
 from itertools import repeat
 import os
 from math import floor
-
+import numpy as np
 
 
 ### Modified from original
@@ -23,11 +23,11 @@ def sort_image(
     sorted_rows_dict = {}
 
 #ex = concurrent.futures.ProcessPoolExecutor(max_workers=5)
-    y_res = size[1]
+    y_res = int(size[1])
     #max_workers = os.cpu_count()
     #divisor = y_res / max_workers
 
-    sublist_target = 50
+    sublist_target = 20
     y_all = list([y for y in range(0, y_res)])
 
     y_sections = []
@@ -38,20 +38,25 @@ def sort_image(
     # take Y size and divide it into "lists"
     # pass Y sections into workers
 
+    #image_data_array = np.array(image_data)
+    #mask_data_array = np.array(mask_data)
+    
 
     #with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
     with concurrent.futures.ProcessPoolExecutor() as executor:
         #future_to_index = dict((executor.submit(sort_row, y, ("PUT ARGS HERE")), y) for y in range(size[1]))
         
         future_to_index = {}          # key: future, value: index         
-        for indx, y_section in enumerate(y_sections):
+        for indx, y_section in enumerate(y_sections, 0):
+            gross_test = [sort_row, y_section, intervals, size, mask_data, image_data, randomness, sorting_function]
             future = executor.submit(sort_row, y_section, intervals, size, mask_data, image_data, randomness, sorting_function)
             future_to_index[future] = indx, y_section
 
         for future in concurrent.futures.as_completed(future_to_index):
             indx, y_section = future_to_index[future]
             # y_section not used :)
-            sorted_rows_dict[indx] = future.result()
+            result = future.result()
+            sorted_rows_dict[indx] = result
     
     #while concurrent.futures.ALL_COMPLETED
     print("Started Sorting Pixels (hopefully executors are done!!!")
@@ -62,7 +67,8 @@ def sort_image(
     
     t2 = time()
     print(f"Completed sort_image in {round(t2-t1, 3)} seconds")
-    return sorted_pixels
+    img_sorted = Image.fromarray(sorted_pixels)
+    return img_sorted
 
 def sort_row(y_section, intervals, size, mask_data, image_data, randomness, sorting_function):
     section_name = f"{y_section[0]}-{y_section[-1]}"

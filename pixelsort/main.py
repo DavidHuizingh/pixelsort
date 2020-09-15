@@ -7,6 +7,7 @@ from pixelsort.constants import DEFAULTS
 from pixelsort.interval import choices as interval_choices
 from pixelsort.sorting import choices as sorting_choices
 
+import numpy as np
 
 def pixelsort(
     image,
@@ -24,15 +25,19 @@ def pixelsort(
     original = image
     image = image.convert('RGBA').rotate(angle, expand=True)
     image_data = image.load()
+    #image_data = np.array(image)
 
     mask_image = mask_image if mask_image else Image.new(
         "1", original.size, color=255)
 
+    mask_trans = (mask_image.convert('1').rotate(angle, expand=True, fillcolor=0))
+    #mask_data = np.array(mask_trans)
+    #'''
     mask_data = (mask_image
                  .convert('1')
                  .rotate(angle, expand=True, fillcolor=0)
                  .load())
-
+    #'''
     interval_image = (interval_image
                       .convert('1')
                       .rotate(angle, expand=True)) if interval_image else None

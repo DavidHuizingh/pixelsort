@@ -5,6 +5,7 @@ from time import sleep
 from math import floor
 
 import sys
+#if __name__ == "__main__":
 from PySide2 import QtWidgets, QtGui
 
 #QApplication = QtWidgets.QApplication
@@ -14,6 +15,7 @@ from pixel_sorter_gui import Ui_MainWindow as sorter_gui
 from Param_Slider import Param_Slider
 from Param_Clength import Param_Clength
 
+from multiprocessing import Process, freeze_support
 
 dev_debug = True
 #debug_image_main = "images/squirrel.jpg"
@@ -1037,4 +1039,5 @@ class Sort_App():
 
 
 if __name__ == '__main__':
+    freeze_support()
     sa = Sort_App()
