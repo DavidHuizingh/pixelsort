@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1031</width>
-    <height>859</height>
+    <height>1000</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -107,7 +107,7 @@
             <x>0</x>
             <y>0</y>
             <width>479</width>
-            <height>829</height>
+            <height>970</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -2315,37 +2315,6 @@
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item>
-          <widget class="QLabel" name="l_generated_image">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>200</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>1000</width>
-             <height>900</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
          <item>
           <spacer name="horizontalSpacer_10">
            <property name="orientation">

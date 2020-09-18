@@ -6,10 +6,10 @@ from math import floor
 
 import sys
 #if __name__ == "__main__":
-from PySide2 import QtWidgets, QtGui
+from PySide2 import QtWidgets, QtGui, QtCore
+from QtImageViewer_Pyside2 import QtImageViewer
 
 #QApplication = QtWidgets.QApplication
-
 
 from pixel_sorter_gui import Ui_MainWindow as sorter_gui
 from Param_Slider import Param_Slider
@@ -657,6 +657,30 @@ class Sort_App():
             self.save_image_handler()
             )
 
+        ### IMAGE DISPLAY:
+        # Default widget:
+        #gui.l_generated_image.setParent(None)
+    
+
+        
+        viewer = QtImageViewer()
+        viewer.setParent(gui.f_preview_panel)
+
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(viewer.sizePolicy().hasHeightForWidth())
+        viewer.setMinimumSize(QtCore.QSize(400, 400))
+        viewer.setMaximumSize(QtCore.QSize(800, 800))
+        viewer.setSizePolicy(sizePolicy)
+        viewer.setObjectName("l_image_viewer_hq")
+        gui.verticalLayout_2.insertWidget(2, viewer)
+
+        
+        self.gui.image_viewer_hq = viewer
+        
+        
+
         ### OTHER
         gui.b_open_in_native_viewer.pressed.connect(lambda:
             self.open_in_native_viewer_handler(button_pressed=True)
@@ -824,7 +848,14 @@ class Sort_App():
             ).convert("RGB")
         #image_sorted_rgb = image_sorted.convert("RGB")
         pix_map = image_sorted.toqpixmap()
-        self.gui.l_generated_image.setPixmap(pix_map)
+        
+        #self.gui.l_generated_image.setPixmap(pix_map)      # Old image viewer
+        self.gui.image_viewer_hq.setImage(pix_map)
+
+        #x = QtImageViewer()
+
+
+
         self.process_events()
 
         # Sets up the output file for the "save" function.
