@@ -16,171 +16,15 @@ from Param_Slider import Param_Slider
 from Param_Clength import Param_Clength
 
 from multiprocessing import Process, freeze_support
+import qdarkgraystyle
+import qdarkstyle
+style = qdarkstyle
 
 dev_debug = True
 #debug_image_main = "images/squirrel.jpg"
 debug_image_main = "images/DSC04688.JPG"
 debug_image_mask = "images/Masks/Head circle_Inverted.jpg"
-
-class Option():
-    def __init__(self):
-        '''This class helps make data more accessable later.'''
-        self.isParam = None
-        self.name = None
-        self.name_display = None
-        self.isEnabled = None
-        self.desc = None
-        self.val_default = None
-        self.val_current = None
-        self.val_range_min = None
-        self.val_range_max = None
-        self.slider_tick_interval = None
-        #self.val_type = None
-        self.associated_parameters = None       # if function
-        self.parameter_always_visible = None
-        self.pw = None                          # pw (parameter widget) if parameter
-        #self.parameter_widget = None
-        self.slider_val = None                  #
-        self.app_ui_update_method = None            # Sort_App method to that should be called when these parameters are interacted with. 
-
-    def _setup(self, isParam, name, name_display, isEnabled, desc, val_default=None, val_range_min=None, val_range_max=None, slider_tick_interval=None, associated_parameters=None, parameter_always_visible=None):
-        '''Allows easy loading of settings.'''
-        self.isParam = isParam
-        self.name = name
-        self.name_display = name_display
-        self.isEnabled = isEnabled
-        self.desc = desc
-        self.val_default = val_default
-        self.val_current = self.val_default
-        self.val_range_min = val_range_min
-        self.val_range_max = val_range_max
-        self.slider_tick_interval = slider_tick_interval
-        self.associated_parameters = associated_parameters
-        self.parameter_always_visible = parameter_always_visible
-
-    def set_visibility_parameter_widget(self, isVisible):
-        '''Allows a parameter to hide it's own widget.'''
-        self.pw.Frame.setVisible(isVisible)
-
-
-    def generate_param_widget(self, frame, app_ui_update_method):
-        '''Pass in a QFrame that this widget will be constructed in.
-        Creates the parameter widget to be used in the UI.'''
-        self.app_ui_update_method = app_ui_update_method
-
-        if self.name == "clength":
-            self.pw = Param_Clength()
-            self.pw.setupUi(Frame=frame, param_name=self.name)
-            self.pw.t_param_clength.setText(self.name_display)
-            self.pw.t_param_clength_desc.setText(self.desc)
-            q_validator = QtGui.QIntValidator()
-            q_validator.setBottom(0)
-            self.pw.tb_param_clength.setValidator(q_validator)
-            self.pw.tb_param_clength.setText(f"{self.val_default}")
-
-            self.pw.tb_param_clength.editingFinished.connect(lambda:
-                self._validate_tb_and_update_values(tb=self.pw.tb_param_clength)
-                )
-
-        else: #SLIDERS
-            self.pw = Param_Slider()
-
-            # SLIDER WITH TB:
-            if self.name == "angle":
-                self.pw.setupUi(Frame=frame, param_name=self.name, is_value_display_tb=True)
-                # Setup textbox
-                self.pw.tb_param_generic_value.setText(str(self.val_default))
-                q_validator = QtGui.QIntValidator()
-                q_validator.setRange(self.val_range_min, self.val_range_max)
-                self.pw.tb_param_generic_value.setValidator(q_validator)
-                self.pw.tb_param_generic_value.editingFinished.connect(lambda:
-                    self._validate_tb_and_update_values(
-                        tb=self.pw.tb_param_generic_value,
-                        slider=self.pw.slider_param_generic)
-                        )
-            # SLIDER NO TB:
-            else:
-                self.pw.setupUi(Frame=frame, param_name=self.name)
-                self.pw.t_param_generic_value.setText(str(self.val_default))
-            
-            
-            self.pw.t_param_generic.setText(self.name_display)
-            self.pw.t_param_generic_desc.setText(self.desc)            
-            
-            self.pw.slider_param_generic.setMinimum(self.val_range_min)
-            self.pw.slider_param_generic.setMaximum(self.val_range_max)
-            self.pw.slider_param_generic.setTickInterval(self.slider_tick_interval)
-            
-            if self.name in ["threshold_lower", "threshold_upper"]:
-                # Store method as object to be called later:
-                self.conversion_method = self._val_converter_threshold
-                input_to_slider = self.val_default * 100
-                self.pw.slider_param_generic.setValue(input_to_slider)
-            else:
-                # Store method as object to be called later:
-                self.conversion_method = self._val_converter_none
-                self.pw.slider_param_generic.setValue(self.val_default)
-            
-            # SLIDER WITH TB:
-            if self.name == "angle":
-                self._update_slider_display_and_values(tb=self.pw.tb_param_generic_value)
-                self.pw.slider_param_generic.valueChanged.connect(lambda:
-                    self._update_slider_display_and_values(tb=self.pw.tb_param_generic_value)
-                    )
-                # Only call UI update when RELEASED:
-                self.pw.slider_param_generic.sliderReleased.connect(lambda:
-                    self.app_ui_update_method()
-                    )              
-            # SLIDER WITH NO TB:
-            else:
-                self._update_slider_display_and_values()
-                self.pw.slider_param_generic.valueChanged.connect(lambda:
-                    self._update_slider_display_and_values()
-                    )
-                # Only call UI update when RELEASED:
-                self.pw.slider_param_generic.sliderReleased.connect(lambda:
-                    self.app_ui_update_method()
-                    )
-    # SLIDERS BOXES:    
-    def _update_slider_display_and_values(self, tb=None):
-        '''Called whenever slider value changes.
-        Applies any conversions needed, updates value displayed, and stores the value for when the pixel_sorter is called.'''
-        s_val = self.pw.slider_param_generic.value()
-
-        # The magic of storing a method as an object happens here:
-        self.val_current = self.conversion_method(s_val)
-
-        if tb is None:
-            self.pw.t_param_generic_value.setText(str(self.val_current))
-        else:
-            tb.setText(str(self.val_current))
-
-    def _val_converter_threshold(self, slider_val):
-        '''Converts slider value -> value within range. Method used by both parameter thresholds.'''
-        converted_val = slider_val / 100
-        return converted_val
-    def _val_converter_none(self, slider_val):
-        '''Throwaway method. Passes back value passed in. Hot potato.'''
-        return slider_val
-
-    # TEXT BOXES:
-    def _validate_tb_and_update_values(self, tb, slider=None):
-        '''Pass in the text box that needs validating. It will also update the slider to the tb's value if one is passed in.
-        This method makes sure text entered in box is numerical.'''
-        # The QIntValidator should force this value to be an int already.
-        tb_text = tb.text()
-        
-        if tb_text in ["", None]:
-            pass
-        elif tb_text.isnumeric:
-            #print(f"textbox text ({tb_text}) is numeric! Yay!")
-            self.val_current = int(tb_text)
-
-            if slider is not None:
-                slider.setValue(self.val_current)
-                
-        # Calls app's method that updates UI
-        self.app_ui_update_method()        
+ 
 
 def _setup_all_sort_options():
     '''Sets up parameter, interval function, and sorting function options.
@@ -225,11 +69,8 @@ def _setup_all_sort_options():
         parameter_angle        
         ]
 
-    # Creates dictionary of all the enabled parameters. 
-    # <parameter name>, <parameter object>
-    parameters_dict = {param.name: param for param in parameters_list if param.isEnabled}
     
-    ## INTERVAL FUNCTIONS:
+    ## INTERVAL FUNCTIONS ###
     # https://github.com/satyarth/pixelsort#interval-functions
     interval_func_random = Option()
     interval_func_random._setup(isParam=False, name="random", name_display="Random", isEnabled=True,
@@ -283,6 +124,10 @@ def _setup_all_sort_options():
         interval_func_none
         ]
 
+    # Creates dictionary of all the enabled parameters. 
+    # <parameter name>, <parameter object>
+    parameters_dict = {param.name: param for param in parameters_list if param.isEnabled}
+
     # Creates dictionary of all the enabled functions. 
     # <function name>, <function object>
     interval_functions_dict = {func.name : func for func in interval_function_list if func.isEnabled}
@@ -295,7 +140,6 @@ def _setup_all_sort_options():
         "minimum" : "Sort on the minimum RGB value of a pixel (either the R, G or B)."
         }
     
-
     # Combining everything to pass back:
     all_options = {
         "parameters" : parameters_dict,
@@ -306,9 +150,166 @@ def _setup_all_sort_options():
     return all_options
 
 
+class Option():
+    def __init__(self):
+        '''This class helps make data more accessable later.'''
+        
+        self.isParam = None
+        self.name = None
+        self.name_display = None
+        self.isEnabled = None
+        self.desc = None
+        self.val_default = None
+        self.val_current = None
+        self.val_range_min = None
+        self.val_range_max = None
+        self.slider_tick_interval = None
+        self.associated_parameters = None       # if function
+        self.parameter_always_visible = None
+        self.pw = None                          # pw (parameter widget) if parameter
+        self.slider_val = None                  #
+        self.app_ui_update_method = None            # Sort_App method to that should be called when these parameters are interacted with. 
+
+    def _setup(self, isParam, name, name_display, isEnabled, desc, val_default=None, val_range_min=None, val_range_max=None, slider_tick_interval=None, associated_parameters=None, parameter_always_visible=None):
+        '''Allows easy loading of settings.'''
+
+        self.isParam = isParam
+        self.name = name
+        self.name_display = name_display
+        self.isEnabled = isEnabled
+        self.desc = desc
+        self.val_default = val_default
+        self.val_current = self.val_default
+        self.val_range_min = val_range_min
+        self.val_range_max = val_range_max
+        self.slider_tick_interval = slider_tick_interval
+        self.associated_parameters = associated_parameters
+        self.parameter_always_visible = parameter_always_visible
+
+    def set_visibility_parameter_widget(self, isVisible):
+        '''Allows a parameter to hide it's own widget.'''
+
+        self.pw.Frame.setVisible(isVisible)
+
+    def generate_param_widget(self, frame, app_ui_update_method):
+        '''Pass in a QFrame that this widget will be constructed in.
+        Creates the parameter widget to be used in the UI.'''
+
+        self.app_ui_update_method = app_ui_update_method
+        if self.name == "clength":
+            self.pw = Param_Clength()
+            self.pw.setupUi(Frame=frame, param_name=self.name)
+            self.pw.t_param_clength.setText(self.name_display)
+            self.pw.t_param_clength_desc.setText(self.desc)
+            q_validator = QtGui.QIntValidator()
+            q_validator.setBottom(0)
+            self.pw.tb_param_clength.setValidator(q_validator)
+            self.pw.tb_param_clength.setText(f"{self.val_default}")
+
+            self.pw.tb_param_clength.editingFinished.connect(lambda:
+                self._validate_tb_and_update_values(tb=self.pw.tb_param_clength)
+                )
+
+        else: #SLIDERS
+            self.pw = Param_Slider()
+
+            # SLIDER WITH TB:
+            if self.name == "angle":
+                self.pw.setupUi(Frame=frame, param_name=self.name, is_value_display_tb=True)
+                # Setup textbox
+                self.pw.tb_param_generic_value.setText(str(self.val_default))
+                q_validator = QtGui.QIntValidator()
+                q_validator.setRange(self.val_range_min, self.val_range_max)
+                self.pw.tb_param_generic_value.setValidator(q_validator)
+                self.pw.tb_param_generic_value.editingFinished.connect(lambda:
+                    self._validate_tb_and_update_values(
+                        tb=self.pw.tb_param_generic_value,
+                        slider=self.pw.slider_param_generic)
+                        )
+            # SLIDER NO TB:
+            else:
+                self.pw.setupUi(Frame=frame, param_name=self.name)
+                self.pw.t_param_generic_value.setText(str(self.val_default))
+            
+            self.pw.t_param_generic.setText(self.name_display)
+            self.pw.t_param_generic_desc.setText(self.desc)            
+            
+            self.pw.slider_param_generic.setMinimum(self.val_range_min)
+            self.pw.slider_param_generic.setMaximum(self.val_range_max)
+            self.pw.slider_param_generic.setTickInterval(self.slider_tick_interval)
+            
+            if self.name in ["threshold_lower", "threshold_upper"]:
+                # Store method as object to be called later:
+                self.conversion_method = self._val_converter_threshold
+                input_to_slider = self.val_default * 100
+                self.pw.slider_param_generic.setValue(input_to_slider)
+            else:
+                # Store method as object to be called later:
+                self.conversion_method = self._val_converter_none
+                self.pw.slider_param_generic.setValue(self.val_default)
+            
+            # SLIDER WITH TB:
+            if self.name == "angle":
+                self._update_slider_display_and_values(tb=self.pw.tb_param_generic_value)
+                self.pw.slider_param_generic.valueChanged.connect(lambda:
+                    self._update_slider_display_and_values(tb=self.pw.tb_param_generic_value)
+                    )
+                # Only call UI update when RELEASED:
+                self.pw.slider_param_generic.sliderReleased.connect(lambda:
+                    self.app_ui_update_method()
+                    )              
+            # SLIDER WITH NO TB:
+            else:
+                self._update_slider_display_and_values()
+                self.pw.slider_param_generic.valueChanged.connect(lambda:
+                    self._update_slider_display_and_values()
+                    )
+                # Only call UI update when RELEASED:
+                self.pw.slider_param_generic.sliderReleased.connect(lambda:
+                    self.app_ui_update_method()
+                    )
+
+    # SLIDERS BOXES:    
+    def _update_slider_display_and_values(self, tb=None):
+        '''Called whenever slider value changes.
+        Applies any conversions needed, updates value displayed, and stores the value for when the pixel_sorter is called.'''
+
+        s_val = self.pw.slider_param_generic.value()
+        # The magic of storing a method as an object happens here:
+        self.val_current = self.conversion_method(s_val)
+        if tb is None:
+            self.pw.t_param_generic_value.setText(str(self.val_current))
+        else:
+            tb.setText(str(self.val_current))
+
+    def _val_converter_threshold(self, slider_val):
+        '''Converts slider value -> value within range. Method used by both parameter thresholds.'''
+        converted_val = slider_val / 100
+        return converted_val
+    def _val_converter_none(self, slider_val):
+        '''Throwaway method. Passes back value passed in. Hot potato.'''
+        return slider_val
+
+    # TEXT BOXES:
+    def _validate_tb_and_update_values(self, tb, slider=None):
+        '''Pass in the text box that needs validating. It will also update the slider to the tb's value if one is passed in.
+        This method makes sure text entered in box is numerical.'''
+        # The QIntValidator should force this value to be an int already.
+
+        tb_text = tb.text()        
+        if tb_text in ["", None]:
+            pass
+        elif tb_text.isnumeric:
+            self.val_current = int(tb_text)
+            if slider is not None:
+                slider.setValue(self.val_current)
+        # Calls app's method that updates UI
+        self.app_ui_update_method()       
+
 class Sorter_Image():
     def __init__(self, img_file_path, sorter_img_type, associated_main_image=None):
         '''Holds common properties associated with an image. All images part of this set are stored as PIL.Image objects.'''
+
         self.path = img_file_path
         self.type = sorter_img_type                             # "main", "mask", (future option)
         self.associated_main_image = associated_main_image      # For "mask" images. Allows it to get it's dimensions more conveniently.
@@ -318,19 +319,16 @@ class Sorter_Image():
         self.full = None
         self.original = None    # used for masks
 
-
     def generate_image_sets(self, is_image_file=True):
         '''Creates thumbnail, preview, preview_fast, and full images'''
-        '''
-        img = Image.open(self.path)
-        self.full = img.convert("RGB")      # ensures there is no alpha right from the start
-        '''
+        # TODO: This is a waste of processing since only one or two images are actually needed.
+        # Change child image creation to happen "on demand" instead of pre-creating everything.
+
         if is_image_file:
             self.full = Image.open(self.path)
         else:
             # If making a Sorter_Image from an unsaved image, the self.full needs to be set before this is called.
             pass
-        #self.full.convert("RGBA")
 
         self.thumbnail =  self.full.copy()
         self.thumbnail.thumbnail((200, 200))
@@ -340,15 +338,15 @@ class Sorter_Image():
 
         self.preview = self.full.copy()
         self.preview.thumbnail((1000, 1000))
-
+        
         #self.thumbnail = self.full.thumbnail((300, 200))
         #self.preview_fast = self.full.thumbnail((400, 400))
         #self.preview = self.full.thumbnail((1000, 1000))
     
     def generate_core_mask_sets(self):
         '''Creates essential mask variations (original and thumbnail). Should be called after being created.'''
-        self.original = Image.open(self.path)
 
+        self.original = Image.open(self.path)
         self.thumbnail = self.original.copy()
         self.thumbnail.thumbnail((200, 200))
 
@@ -357,53 +355,17 @@ class Sorter_Image():
         
         #image_resized = self.original.copy()
         image_resized = self.original.copy().resize(image_to_match.size)
-        
         return image_resized
-
-
-    # I DON'T THINK I WILL END UP USING THIS:
-    def generate_masks_from_associated_image(self):
-        '''Sizes mask based on "associated" Sorter_Image object.'''
-        # Masks make use of the "original" since they need to have corrisponding "full" images to match their associated image.
-        self.original = Image.open(self.path)
-
-        self.full = self.original.copy().resize(self.associated_main_image.full.size)
-        
-        #self.thumbnail = self.original.copy()
-        #self.thumbnail.resize(self.associated_main_image.thumbnail.size)
-
-        self.preview_fast = self.original.copy().resize(self.associated_main_image.preview_fast.size)
-
-        self.preview = self.original.copy().resize(self.associated_main_image.preview.size)
-        
 
     def create_pixmap(self, pil_img):
         '''Pass in a PIL.Image object. Returns a QtGui.QPixmap object.'''
         
         pix_map = pil_img.toqpixmap()
         return pix_map
-    
-    def _create_dimensions(self, longest_desired_size):
-        '''NOW OBSOLETE!!! Creates W and H of an image based on the longest edge's desired size. Returns Tuple (WxH).'''
-        # UPDATE: THERE IS A BUILT IN FUNCTION FOR THIS OMG
-        # Image().thumbnail(<width>, <height>)
-
-        full_w, full_h = self.full.size
-        if full_w >= full_h:    # width is larger
-            downscale_ratio = full_w / longest_desired_size
-            resized_w = longest_desired_size
-            resized_h = floor(full_h / downscale_ratio)
-            
-        else:                   # height is larger
-            downscale_ratio = full_h / longest_desired_size
-            resized_h = longest_desired_size
-            resized_w = floor(full_w / downscale_ratio)
-        
-        return resized_w, resized_h
-
 
     def get_picture_size(self, picture_size):
         '''Picture size can be "full", "preview", or "fast". Returns the Image of the specificed size.'''
+
         if picture_size == "full":
             return self.full
         elif picture_size == "preview":
@@ -411,7 +373,6 @@ class Sorter_Image():
         elif picture_size == "fast":
             return self.preview_fast       
         
-
 class Sort_Gui(QtWidgets.QMainWindow, sorter_gui):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -440,7 +401,7 @@ class Sort_App():
         @classmethod
         def fast_preview_check(cls_d, func):
             def _fast_preview(self, *args, **kwargs):
-                print('''Decorator: "fast_preview_check" called''')
+                #print('''Decorator: "fast_preview_check" called''')
                 func_return = func(self, *args, **kwargs)
                 if not self.gui.cb_live_preview.isChecked():
                     pass
@@ -453,11 +414,10 @@ class Sort_App():
                 return func_return
             return _fast_preview
 
-
         @classmethod
         def image_size_warning_check(cls_d, func):
             def _image_size_warning_check(self, *args, **kwargs):
-                print('''Decorator: "image_size_warning_check" called''')
+                #print('''Decorator: "image_size_warning_check" called''')
                 func_return = func(self, *args, **kwargs)
                 # Relies on self.sorter_images.
                 try:
@@ -477,13 +437,11 @@ class Sort_App():
                         warning_label.setFont(f)
                     else:
                         self.gui.t_image_size_warning_dynamic.setHidden(True)
-                #except:
-                #    self.gui.t_image_size_warning_dynamic.setHidden(True)
 
                 return func_return
             return _image_size_warning_check
 
-        ### DECORATOR TESTS: ###
+        ### DECORATOR TESTS ###
         @classmethod
         def dec_test_sort_app_variables(cls_d, func):
             #passed_tp = self.passed_tp
@@ -506,8 +464,6 @@ class Sort_App():
                 return func_return
             return wrapper
 
-    
-    
     def __init__(self):
         '''This is the main program running the application.'''
         # Declare variables
@@ -527,7 +483,6 @@ class Sort_App():
         self.output_dir = None        
         self.p_image_in = None      # LEGACY
         self.test_image = Path() / "images" / "DSC04688_EDIT_1000.jpg"
-
 
         # This is THE user interface
         self.app = QtWidgets.QApplication(sys.argv)
@@ -555,7 +510,6 @@ class Sort_App():
 
         load_image_main()
         load_image_mask()
-
 
     @Decorators.image_size_warning_check
     def setup_gui(self):
@@ -593,16 +547,16 @@ class Sort_App():
             sorter_image_type="mask", label_wig=gui.l_loaded_mask_preview)
             )
         
-
         gui.b_choose_save_location.pressed.connect(lambda: self.select_output_location())
         self.output_dir = Path(__file__).parent
         gui.t_save_location_current.setText(str(self.output_dir.absolute()))
 
         # Sets the interval functions drop down by cycling through interval_functions_dict:
-
         for func_object in self.sort_interval_functions.values():
             gui.cb_interval_function.addItem(func_object.name)
-            gui.cb_interval_function.setToolTip(func_object.desc)
+            # Commented out because this sets the tool tip of the "drop down" and not per item inside of it.
+            # Basically, can only hold 1 value 
+            #gui.cb_interval_function.setToolTip(func_object.desc)
 
         # fancy way of setting "description" field for current index.
         gui.t_interval_function_desc.setText(
@@ -613,20 +567,14 @@ class Sort_App():
             self.gui_cb_interval_function_changed()
             )
         
-
-        ### SETUP PARAMETERS
-        
+        ### SETUP PARAMETERS ###        
         for param_obj in self.sort_parameters.values():
             # Creates a QFrame, parents it, adds it to the layout, and passes it into the parameter to generate the rest of the widget.
             frame = QtWidgets.QFrame(parent=self.gui.scroll_area_settings_content)
             self.gui.vl_parameters.addWidget(frame)
             param_obj.generate_param_widget(frame=frame, app_ui_update_method=self.update_ui_from_param)
             
-
-
-        ### SETUP PIXEL ORDERING
-        # Similar setup to Interval Sorting Combo Box.
-
+        ### SETUP PIXEL ORDERING ###
         for name in self.sorting_functions.keys():
             gui.cb_pixel_ordering_option.addItem(name)
             #gui.cb_pixel_ordering_option.setToolTip(desc)
@@ -634,7 +582,6 @@ class Sort_App():
         gui.t_pixel_ordering_option_desc.setText(
                 self.sorting_functions[gui.cb_pixel_ordering_option.currentText()]                
                 )
-
 
         def pixel_ordering_option_changed():
             # sorting_functions are simple dictionaries:
@@ -647,8 +594,7 @@ class Sort_App():
             pixel_ordering_option_changed()
             )
 
-
-        ### IMAGE OUTPUTS
+        ### IMAGE OUTPUT BUTTONS ###
         gui.b_generate_pixel_sort.pressed.connect(lambda:
             self.pixel_sort_called()
             )
@@ -657,31 +603,20 @@ class Sort_App():
             self.save_image_handler()
             )
 
-        ### IMAGE DISPLAY:
-        # Default widget:
-        #gui.l_generated_image.setParent(None)
-    
+        ### IMAGE DISPLAY ###
+        def custom_image_viewer():
+            # Custom Viewer Widget modified for PySide2:
+            #gui.gv_image_display
+            # A "graphics view" already exists in the GUI as a placeholder
+            # This custom widget steals it's properties (minimumSize, maximumSize, sizePolicy, sizeAdjustPolicy):
+            indx = gui.verticalLayout_2.indexOf(gui.gv_image_display)
+            viewer = QtImageViewer(graphics_view=gui.gv_image_display)  # Pass in "placeholder" to steal properties from
+            gui.gv_image_display.setParent(None)
+            gui.verticalLayout_2.insertWidget(indx, viewer)
+            self.gui.image_viewer_hq = viewer
+        custom_image_viewer()
 
-        
-        viewer = QtImageViewer()
-        viewer.setParent(gui.f_preview_panel)
-
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(viewer.sizePolicy().hasHeightForWidth())
-        viewer.setMinimumSize(QtCore.QSize(400, 400))
-        viewer.setMaximumSize(QtCore.QSize(800, 800))
-        viewer.setSizePolicy(sizePolicy)
-        viewer.setObjectName("l_image_viewer_hq")
-        gui.verticalLayout_2.insertWidget(2, viewer)
-
-        
-        self.gui.image_viewer_hq = viewer
-        
-        
-
-        ### OTHER
+        ### OTHER ###
         gui.b_open_in_native_viewer.pressed.connect(lambda:
             self.open_in_native_viewer_handler(button_pressed=True)
             )
@@ -692,19 +627,20 @@ class Sort_App():
 
         self.gui_cb_interval_function_changed()
 
-        
         gui.cb_sort_option_preview.clicked.connect(lambda:
             self.update_ui_from_param()
             )
 
         self.update_ui_preview_label_size()
 
+        ### SET STYLING ###
+        self.app.setStyleSheet(style.load_stylesheet())
     
     @Decorators.fast_preview_check
     @Decorators.image_size_warning_check
     def update_ui_from_param(self):
-        '''This method gets passed into a parameter objct and
-        is called whenever the param's signals are triggered.'''
+        '''Calling this method will trigger UI related decorators attached to it.
+        This method is just a dummy and is used purely to call these decorators.'''
         pass
 
     def update_ui_preview_label_size(self, original_img=None, sorted_img=None, img_name = None):
@@ -714,7 +650,7 @@ class Sort_App():
         blank = "-------"        
         if img_name is None:
             img_name = blank        
-        
+
         try:
             size_original, size_display = (f"{original_img.size[0]}x{original_img.size[1]}", f"{sorted_img.size[0]}x{sorted_img.size[1]}")
         except:
@@ -729,10 +665,10 @@ class Sort_App():
         self.gui.t_image_preview_sizes_dyn.setText(f'''Sizes:\n- original ({size_original}),\n- displayed ({size_display})''')
         self.gui.t_image_preview_ratio_dyn.setText(f'''Displayed Ratio: {image_ratio}''')
 
-
     def open_in_native_viewer_handler(self, PIL_image=None, button_pressed=False):
         '''Checks to see if image should be opened in user's native image viewing app.'''
         # This method needs either an PIL image passed in, or for an output image file to have been saved.
+
         if self.gui.cb_post_sort_option_picture_viewer.isChecked() or button_pressed:
             try:
                 try:
@@ -744,15 +680,16 @@ class Sort_App():
             except:
                 pass
 
-
     def fast_preview_handler(self):
         '''Call this every time a fast preview might want to be generated.'''
+
         if self.gui.cb_live_preview.isChecked():
             if self.sorter_images != None:
                 self.generate_sorts(desired_picture_size="fast")
 
     def pixel_sort_called(self):
         '''Called whenever a button is pressed.'''
+
         # Runs all the required methods in respect to user's settings and post-processed options.
         if self.gui.cb_sort_option_preview.isChecked():
             desired_picture_size = "preview"
@@ -761,10 +698,9 @@ class Sort_App():
         
         self.generate_sorts(desired_picture_size=desired_picture_size)
 
-
-
     def save_image_handler(self):
         '''Called when the "save" button is pressed.'''
+
         if self.output_file:
             # Code below prevents overriding existing images:
             output_file_valid = self.output_file
@@ -777,8 +713,6 @@ class Sort_App():
             #output_file_valid.save(self.image_sorted)
         else:
             print("No images could be saved :(")
-
-
 
     def generate_sorts(self, desired_picture_size):
         '''Starts the Pixel Sorting magic. desired_picture_size can be "full", "preview", or "fast".'''
@@ -846,16 +780,9 @@ class Sort_App():
             upper_threshold=self.sort_parameters["threshold_upper"].val_current,
             angle=self.sort_parameters["angle"].val_current
             ).convert("RGB")
-        #image_sorted_rgb = image_sorted.convert("RGB")
+
         pix_map = image_sorted.toqpixmap()
-        
-        #self.gui.l_generated_image.setPixmap(pix_map)      # Old image viewer
         self.gui.image_viewer_hq.setImage(pix_map)
-
-        #x = QtImageViewer()
-
-
-
         self.process_events()
 
         # Sets up the output file for the "save" function.
@@ -869,7 +796,6 @@ class Sort_App():
             original_img=sorter_image.full,
             sorted_img=image_sorted,
             img_name=sorter_image.path.name)
-        
         
         self.image_sorted = image_sorted
         return self.image_sorted
@@ -891,7 +817,6 @@ class Sort_App():
                         param_obj.set_visibility_parameter_widget(True)
                 break
 
-
     def gui_mask_option_select(self):
         '''Finds the radio button selected and changes the mask frame that match the selection.'''
         for section, radio in self.gui_mask_radios.items():
@@ -902,7 +827,6 @@ class Sort_App():
             if radio.isChecked():
                 self.gui_active_mask_section = section
 
-
     def show_image_picker(self, sorter_image_type, label_wig):
         '''Opens the window to select an image in.
         Pass in how the image will be used ("main" or "mask") and the label widget that will display the thumbnail.'''
@@ -910,7 +834,6 @@ class Sort_App():
         children = self.gui.findChildren(QtWidgets.QFileDialog)
         if children:
             print("Dialog box already open. Preventing more occurrences.")
-
         else:
             picker = QtWidgets.QFileDialog(self.gui)
             # https://doc.qt.io/qtforpython/PySide2/QtWidgets/QFileDialog.html#PySide2.QtWidgets.PySide2.QtWidgets.QFileDialog.FileMode
@@ -937,7 +860,6 @@ class Sort_App():
         
         else:
             pic_urls = debug_override_images
-        #self.gui.t_image_size_warning_dynamic.text()
 
         if pic_urls:
             # Checks if what user selected is a dir or files:
@@ -975,8 +897,6 @@ class Sort_App():
                 for sorter_mask in reversed(self.sorter_image_masks):
                     self.add_folder_text(associated_wig=self.gui.scroll_area_found_masks, img_path=sorter_mask.path)
                     
-                    
-            
             elif self.gui_active_mask_section == "single":
                 first_img = self.sorter_image_masks[0]
 
@@ -1003,7 +923,6 @@ class Sort_App():
             # Sets preview
             pix_map = new_sorter_image.create_pixmap(new_sorter_image.thumbnail)
             self.gui.l_loaded_image_preview.setPixmap(pix_map)
-            #self.gui.l_loaded_image_preview.setMaximumSize(QtCore.QSize(200, 200))        
         except:
             print("Couldn't make new image from currently sorted image.")
 
@@ -1015,9 +934,9 @@ class Sort_App():
         mask_label.setText(f"{img_path.name}")
         self.gui.vl_found_masks.insertWidget(0, mask_label)
 
-
     def remove_folder_text(self, associated_wig):
         '''Removes all text in the associated widget'''
+
         children = self.gui.scroll_area_found_masks.children()
         for child in children:
             if type(child) == QtWidgets.QLabel:
@@ -1025,6 +944,7 @@ class Sort_App():
 
     def check_if_image_and_mask_image_share_a_path(self):
         '''Checks if new images overlap with any previously selected images by comparing Paths.'''
+
         if self.sorter_images and self.sorter_image_masks:
             for mask in self.sorter_image_masks:
                 if mask.path in [img.path for img in self.sorter_images]:
@@ -1036,9 +956,7 @@ class Sort_App():
         children = self.gui.findChildren(QtWidgets.QFileDialog)
         if children:
             print("Dialog box already open. Preventing more occurrences.")
-
         else:
-
             output_picker = QtWidgets.QFileDialog(self.gui)
             output_picker.setFileMode(QtWidgets.QFileDialog.Directory)
             p = str(Path().absolute())
@@ -1051,23 +969,19 @@ class Sort_App():
         directory = output_picker_wig.selectedFiles()[0]      # SHOULD only return a Directory
         self.output_dir = Path(directory)
         self.gui.t_save_location_current.setText(str(self.output_dir.absolute()))
-        
         # Makes sure widget is removed from main gui so that if this funct is called again, it can
         # prevent opening two dialog windows (not sure why this is a problem.)
         output_picker_wig.setParent(None)
 
-
     def process_events(self):
         '''Forces Qt Application to "processEvents"'''
         QtGui.QGuiApplication.processEvents()
-
 
     def app_launch(self):
         '''Runs the app. Basically the last step.'''
         #self.app = QtWidgets.QApplication(sys.argv)
         self.gui.show()
         self.app.exec_()
-
 
 if __name__ == '__main__':
     freeze_support()
