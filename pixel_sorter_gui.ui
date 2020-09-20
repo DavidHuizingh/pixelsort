@@ -2408,7 +2408,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGraphicsView" name="gv_image_display">
+        <widget class="QtImageViewer" name="image_viewer_hq">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
@@ -2526,6 +2526,11 @@
    <class>FileDragDrop</class>
    <extends>QLabel</extends>
    <header>CustomWidgets/Drag_Drop</header>
+  </customwidget>
+  <customwidget>
+   <class>QtImageViewer</class>
+   <extends>QGraphicsView</extends>
+   <header>CustomWidgets/QtImageViewer_Pyside2</header>
   </customwidget>
  </customwidgets>
  <resources/>

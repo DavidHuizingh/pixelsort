@@ -13,6 +13,7 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
 from CustomWidgets.Drag_Drop import FileDragDrop
+from CustomWidgets.QtImageViewer_Pyside2 import QtImageViewer
 
 
 class Ui_MainWindow(object):
@@ -978,20 +979,20 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.line_2)
 
-        self.gv_image_display = QGraphicsView(self.f_preview_panel)
-        self.gv_image_display.setObjectName(u"gv_image_display")
+        self.image_viewer_hq = QtImageViewer(self.f_preview_panel)
+        self.image_viewer_hq.setObjectName(u"image_viewer_hq")
         sizePolicy14 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         sizePolicy14.setHorizontalStretch(0)
         sizePolicy14.setVerticalStretch(0)
-        sizePolicy14.setHeightForWidth(self.gv_image_display.sizePolicy().hasHeightForWidth())
-        self.gv_image_display.setSizePolicy(sizePolicy14)
-        self.gv_image_display.setMinimumSize(QSize(400, 200))
-        self.gv_image_display.setMaximumSize(QSize(1500, 1000))
-        self.gv_image_display.setFrameShape(QFrame.NoFrame)
-        self.gv_image_display.setFrameShadow(QFrame.Plain)
-        self.gv_image_display.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        sizePolicy14.setHeightForWidth(self.image_viewer_hq.sizePolicy().hasHeightForWidth())
+        self.image_viewer_hq.setSizePolicy(sizePolicy14)
+        self.image_viewer_hq.setMinimumSize(QSize(400, 200))
+        self.image_viewer_hq.setMaximumSize(QSize(1500, 1000))
+        self.image_viewer_hq.setFrameShape(QFrame.NoFrame)
+        self.image_viewer_hq.setFrameShadow(QFrame.Plain)
+        self.image_viewer_hq.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
-        self.verticalLayout_2.addWidget(self.gv_image_display)
+        self.verticalLayout_2.addWidget(self.image_viewer_hq)
 
         self.verticalSpacer_3 = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Preferred)
 

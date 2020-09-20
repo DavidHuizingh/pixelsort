@@ -605,17 +605,8 @@ class Sort_App():
             )
 
         ### IMAGE DISPLAY ###
-        def custom_image_viewer():
-            # Custom Viewer Widget modified for PySide2:
-            #gui.gv_image_display
-            # A "graphics view" already exists in the GUI as a placeholder
-            # This custom widget steals it's properties (minimumSize, maximumSize, sizePolicy, sizeAdjustPolicy):
-            indx = gui.verticalLayout_2.indexOf(gui.gv_image_display)
-            viewer = QtImageViewer(graphics_view=gui.gv_image_display)  # Pass in "placeholder" to steal properties from
-            gui.gv_image_display.setParent(None)
-            gui.verticalLayout_2.insertWidget(indx, viewer)
-            self.gui.image_viewer_hq = viewer
-        custom_image_viewer()
+
+        # 
 
         ### OTHER ###
         gui.b_open_in_native_viewer.pressed.connect(lambda:

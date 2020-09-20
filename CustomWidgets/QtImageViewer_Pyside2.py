@@ -60,9 +60,11 @@ class QtImageViewer(QGraphicsView):
     rightMouseButtonDoubleClicked = Signal(float, float)
 
 
-    def __init__(self, graphics_view = QGraphicsView):
+    def __init__(self, parent=None):
         QGraphicsView.__init__(self)
         
+        if parent is not None:
+            self.setParent(parent)
         # Image is displayed as a QPixmap in a QGraphicsScene attached to this QGraphicsView.
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
@@ -91,55 +93,6 @@ class QtImageViewer(QGraphicsView):
         self.canZoom = True
         self.canPan = True
 
-        if graphics_view is None:
-            pass
-        else:
-            
-            self.setMinimumSize(graphics_view.minimumSize())
-            self.setMaximumSize(graphics_view.maximumSize())
-            #self.setHeightForWidth(graphics_view.heightForWidth())
-            self.setSizePolicy(graphics_view.sizePolicy())
-            self.setSizeAdjustPolicy(graphics_view.sizeAdjustPolicy())
-            #graphics_view.indexOf
-            
-            
-            
-        """
-        
-    def __init__(self):
-        
-        QGraphicsView.__init__(self)
-
-        # Image is displayed as a QPixmap in a QGraphicsScene attached to this QGraphicsView.
-        self.scene = QGraphicsScene()
-        #self.scene.setMinimumRenderSize(800)
-        #self.scene.set
-        self.setScene(self.scene)
-
-        # Store a local handle to the scene's current image pixmap.
-        self._pixmapHandle = None
-
-        # Image aspect ratio mode.
-        # !!! ONLY applies to full image. Aspect ratio is always ignored when zooming.
-        #   Qt.IgnoreAspectRatio: Scale image to fit viewport.
-        #   Qt.KeepAspectRatio: Scale image to fit inside viewport, preserving aspect ratio.
-        #   Qt.KeepAspectRatioByExpanding: Scale image to fill the viewport, preserving aspect ratio.
-        self.aspectRatioMode = Qt.KeepAspectRatio
-
-        # Scroll bar behaviour.
-        #   Qt.ScrollBarAlwaysOff: Never shows a scroll bar.
-        #   Qt.ScrollBarAlwaysOn: Always shows a scroll bar.
-        #   Qt.ScrollBarAsNeeded: Shows a scroll bar only when zoomed.
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-
-        # Stack of QRectF zoom boxes in scene coordinates.
-        self.zoomStack = []
-
-        # Flags for enabling/disabling mouse interaction.
-        self.canZoom = True
-        self.canPan = True
-        """
 
     def hasImage(self):
         """ Returns whether or not the scene contains an image pixmap.
