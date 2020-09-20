@@ -1,7 +1,6 @@
 import random
-from pixelsort.util import dec_time
 
-@dec_time
+
 def sort_image(
         size,
         image_data,

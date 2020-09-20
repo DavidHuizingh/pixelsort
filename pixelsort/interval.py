@@ -1,8 +1,8 @@
 from random import randint, random as random_range
 from PIL import ImageFilter
-from pixelsort.util import lightness, dec_time
+from pixelsort.util import lightness
 
-@dec_time
+
 def edge(image, lower_threshold, **kwargs):
     edge_data = image.filter(ImageFilter.FIND_EDGES).convert('RGBA').load()
     intervals = []
@@ -18,7 +18,7 @@ def edge(image, lower_threshold, **kwargs):
                 flag = False
     return intervals
 
-@dec_time
+
 def threshold(image, lower_threshold, upper_threshold, **kwargs):
     intervals = []
     image_data = image.load()
@@ -30,7 +30,7 @@ def threshold(image, lower_threshold, upper_threshold, **kwargs):
                 intervals[y].append(x)
     return intervals
 
-@dec_time
+
 def random(image, clength, **kwargs):
     intervals = []
 
@@ -45,7 +45,7 @@ def random(image, clength, **kwargs):
                 intervals[y].append(x)
     return intervals
 
-@dec_time
+
 def waves(image, clength, **kwargs):
     intervals = []
 
@@ -60,7 +60,7 @@ def waves(image, clength, **kwargs):
                 intervals[y].append(x)
     return intervals
 
-@dec_time
+
 def file_mask(image, interval_image, **kwargs):
     intervals = []
     data = interval_image.load()
@@ -76,7 +76,7 @@ def file_mask(image, interval_image, **kwargs):
                 flag = False
     return intervals
 
-@dec_time
+
 def file_edges(image, interval_image, lower_threshold, **kwargs):
     edge_data = interval_image.filter(
         ImageFilter.FIND_EDGES).convert('RGBA').load()
@@ -93,7 +93,7 @@ def file_edges(image, interval_image, lower_threshold, **kwargs):
                 flag = False
     return intervals
 
-@dec_time
+
 def none(image, **kwargs):
     intervals = []
     for y in range(image.size[1]):

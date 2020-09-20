@@ -1,18 +1,6 @@
 from colorsys import rgb_to_hsv
 import time
 
-def dec_time(func):
-    def func_wrap(*args, **kwargs):
-        t_start = time.time()
-        func_return = func(*args, **kwargs)
-        t_finish = time.time()
-        t_elapsed = t_finish - t_start
-
-        print(f'''Function "{func.__name__}" completed in {t_elapsed}''')
-
-        return func_return
-    return func_wrap
-
 
 def id_generator():
     timestr = time.strftime("%Y%m%d-%H%M%S")
@@ -54,16 +42,3 @@ def crop_to(image_to_crop, reference_image):
             int(upper),
             int(right),
             int(lower)))
-
-
-@dec_time
-def silly_test(number):
-
-    new_number = number + 100
-    return new_number
-
-
-if __name__ == "__main__":
-    
-    test_results = silly_test(100)
-    print(f"Final output: {test_results}")

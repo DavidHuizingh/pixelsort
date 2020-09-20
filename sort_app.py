@@ -7,13 +7,14 @@ from math import floor
 import sys
 #if __name__ == "__main__":
 from PySide2 import QtWidgets, QtGui, QtCore
-from QtImageViewer_Pyside2 import QtImageViewer
+
 
 #QApplication = QtWidgets.QApplication
 
 from pixel_sorter_gui import Ui_MainWindow as sorter_gui
-from Param_Slider import Param_Slider
-from Param_Clength import Param_Clength
+from CustomWidgets.Param_Slider import Param_Slider
+from CustomWidgets.Param_Clength import Param_Clength
+from CustomWidgets.QtImageViewer_Pyside2 import QtImageViewer
 
 from multiprocessing import Process, freeze_support
 import qdarkgraystyle
@@ -153,7 +154,7 @@ def _setup_all_sort_options():
 class Option():
     def __init__(self):
         '''This class helps make data more accessable later.'''
-        
+
         self.isParam = None
         self.name = None
         self.name_display = None

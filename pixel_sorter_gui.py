@@ -12,6 +12,8 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
+from CustomWidgets.Drag_Drop import FileDragDrop
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -163,7 +165,7 @@ class Ui_MainWindow(object):
 
         self.hl_Image.addLayout(self.vl_right)
 
-        self.l_loaded_image_preview = QLabel(self.scroll_area_settings_content)
+        self.l_loaded_image_preview = FileDragDrop(self.scroll_area_settings_content)
         self.l_loaded_image_preview.setObjectName(u"l_loaded_image_preview")
         sizePolicy7 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
         sizePolicy7.setHorizontalStretch(0)
@@ -317,7 +319,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_12.addLayout(self.vl_mask_single_right)
 
-        self.l_loaded_mask_preview = QLabel(self.f_hl_mask_single)
+        self.l_loaded_mask_preview = FileDragDrop(self.f_hl_mask_single)
         self.l_loaded_mask_preview.setObjectName(u"l_loaded_mask_preview")
         sizePolicy7.setHeightForWidth(self.l_loaded_mask_preview.sizePolicy().hasHeightForWidth())
         self.l_loaded_mask_preview.setSizePolicy(sizePolicy7)
@@ -684,9 +686,15 @@ class Ui_MainWindow(object):
 
         self.vl_sort_options.addWidget(self.cb_sort_option_preview)
 
-        self.verticalSpacer_8 = QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.cb_live_preview = QCheckBox(self.scroll_area_settings_content)
+        self.cb_live_preview.setObjectName(u"cb_live_preview")
+        sizePolicy11 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        sizePolicy11.setHorizontalStretch(0)
+        sizePolicy11.setVerticalStretch(0)
+        sizePolicy11.setHeightForWidth(self.cb_live_preview.sizePolicy().hasHeightForWidth())
+        self.cb_live_preview.setSizePolicy(sizePolicy11)
 
-        self.vl_sort_options.addItem(self.verticalSpacer_8)
+        self.vl_sort_options.addWidget(self.cb_live_preview)
 
 
         self.hl_generation_2.addLayout(self.vl_sort_options)
@@ -701,11 +709,18 @@ class Ui_MainWindow(object):
 
         self.cb_post_sort_option_save_on_create = QCheckBox(self.scroll_area_settings_content)
         self.cb_post_sort_option_save_on_create.setObjectName(u"cb_post_sort_option_save_on_create")
+        sizePolicy12 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
+        sizePolicy12.setHorizontalStretch(0)
+        sizePolicy12.setVerticalStretch(0)
+        sizePolicy12.setHeightForWidth(self.cb_post_sort_option_save_on_create.sizePolicy().hasHeightForWidth())
+        self.cb_post_sort_option_save_on_create.setSizePolicy(sizePolicy12)
 
         self.vl_post_sort_options.addWidget(self.cb_post_sort_option_save_on_create)
 
         self.cb_post_sort_option_picture_viewer = QCheckBox(self.scroll_area_settings_content)
         self.cb_post_sort_option_picture_viewer.setObjectName(u"cb_post_sort_option_picture_viewer")
+        sizePolicy12.setHeightForWidth(self.cb_post_sort_option_picture_viewer.sizePolicy().hasHeightForWidth())
+        self.cb_post_sort_option_picture_viewer.setSizePolicy(sizePolicy12)
 
         self.vl_post_sort_options.addWidget(self.cb_post_sort_option_picture_viewer)
 
@@ -911,53 +926,53 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setContentsMargins(0, -1, -1, -1)
         self.hl_image_preview_top = QHBoxLayout()
         self.hl_image_preview_top.setObjectName(u"hl_image_preview_top")
-        self.cb_live_preview = QCheckBox(self.f_preview_panel)
-        self.cb_live_preview.setObjectName(u"cb_live_preview")
-        sizePolicy11 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
-        sizePolicy11.setHorizontalStretch(0)
-        sizePolicy11.setVerticalStretch(0)
-        sizePolicy11.setHeightForWidth(self.cb_live_preview.sizePolicy().hasHeightForWidth())
-        self.cb_live_preview.setSizePolicy(sizePolicy11)
-
-        self.hl_image_preview_top.addWidget(self.cb_live_preview)
-
-        self.verticalLayout_7 = QVBoxLayout()
-        self.verticalLayout_7.setSpacing(6)
-        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
+        self.hl_image_preview_top.setContentsMargins(-1, 0, -1, -1)
         self.t_image_preview_orig_name_dyn = QLabel(self.f_preview_panel)
         self.t_image_preview_orig_name_dyn.setObjectName(u"t_image_preview_orig_name_dyn")
+        sizePolicy.setHeightForWidth(self.t_image_preview_orig_name_dyn.sizePolicy().hasHeightForWidth())
+        self.t_image_preview_orig_name_dyn.setSizePolicy(sizePolicy)
+        self.t_image_preview_orig_name_dyn.setMinimumSize(QSize(150, 0))
         self.t_image_preview_orig_name_dyn.setMaximumSize(QSize(16777215, 25))
-        self.t_image_preview_orig_name_dyn.setFont(font1)
+        font4 = QFont()
+        font4.setBold(True)
+        font4.setItalic(False)
+        font4.setWeight(75)
+        self.t_image_preview_orig_name_dyn.setFont(font4)
 
-        self.verticalLayout_7.addWidget(self.t_image_preview_orig_name_dyn)
+        self.hl_image_preview_top.addWidget(self.t_image_preview_orig_name_dyn)
 
         self.t_image_preview_sizes_dyn = QLabel(self.f_preview_panel)
         self.t_image_preview_sizes_dyn.setObjectName(u"t_image_preview_sizes_dyn")
+        sizePolicy.setHeightForWidth(self.t_image_preview_sizes_dyn.sizePolicy().hasHeightForWidth())
+        self.t_image_preview_sizes_dyn.setSizePolicy(sizePolicy)
+        self.t_image_preview_sizes_dyn.setMinimumSize(QSize(150, 0))
         self.t_image_preview_sizes_dyn.setMaximumSize(QSize(16777215, 25))
-        self.t_image_preview_sizes_dyn.setFont(font1)
+        self.t_image_preview_sizes_dyn.setFont(font4)
 
-        self.verticalLayout_7.addWidget(self.t_image_preview_sizes_dyn)
+        self.hl_image_preview_top.addWidget(self.t_image_preview_sizes_dyn)
 
         self.t_image_preview_ratio_dyn = QLabel(self.f_preview_panel)
         self.t_image_preview_ratio_dyn.setObjectName(u"t_image_preview_ratio_dyn")
+        self.t_image_preview_ratio_dyn.setMinimumSize(QSize(150, 0))
         self.t_image_preview_ratio_dyn.setMaximumSize(QSize(16777215, 25))
-        self.t_image_preview_ratio_dyn.setFont(font1)
+        self.t_image_preview_ratio_dyn.setFont(font4)
 
-        self.verticalLayout_7.addWidget(self.t_image_preview_ratio_dyn)
+        self.hl_image_preview_top.addWidget(self.t_image_preview_ratio_dyn)
 
+        self.horizontalSpacer_10 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Minimum)
 
-        self.hl_image_preview_top.addLayout(self.verticalLayout_7)
+        self.hl_image_preview_top.addItem(self.horizontalSpacer_10)
 
 
         self.verticalLayout_2.addLayout(self.hl_image_preview_top)
 
         self.line_2 = QFrame(self.f_preview_panel)
         self.line_2.setObjectName(u"line_2")
-        sizePolicy12 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
-        sizePolicy12.setHorizontalStretch(0)
-        sizePolicy12.setVerticalStretch(0)
-        sizePolicy12.setHeightForWidth(self.line_2.sizePolicy().hasHeightForWidth())
-        self.line_2.setSizePolicy(sizePolicy12)
+        sizePolicy13 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        sizePolicy13.setHorizontalStretch(0)
+        sizePolicy13.setVerticalStretch(0)
+        sizePolicy13.setHeightForWidth(self.line_2.sizePolicy().hasHeightForWidth())
+        self.line_2.setSizePolicy(sizePolicy13)
         self.line_2.setFrameShadow(QFrame.Plain)
         self.line_2.setFrameShape(QFrame.HLine)
 
@@ -965,11 +980,11 @@ class Ui_MainWindow(object):
 
         self.gv_image_display = QGraphicsView(self.f_preview_panel)
         self.gv_image_display.setObjectName(u"gv_image_display")
-        sizePolicy13 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
-        sizePolicy13.setHorizontalStretch(0)
-        sizePolicy13.setVerticalStretch(0)
-        sizePolicy13.setHeightForWidth(self.gv_image_display.sizePolicy().hasHeightForWidth())
-        self.gv_image_display.setSizePolicy(sizePolicy13)
+        sizePolicy14 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
+        sizePolicy14.setHorizontalStretch(0)
+        sizePolicy14.setVerticalStretch(0)
+        sizePolicy14.setHeightForWidth(self.gv_image_display.sizePolicy().hasHeightForWidth())
+        self.gv_image_display.setSizePolicy(sizePolicy14)
         self.gv_image_display.setMinimumSize(QSize(400, 200))
         self.gv_image_display.setMaximumSize(QSize(1500, 1000))
         self.gv_image_display.setFrameShape(QFrame.NoFrame)
@@ -1052,7 +1067,8 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.cb_sort_option_preview.setToolTip(QCoreApplication.translate("MainWindow", u"Will save files as soon as they are created", None))
 #endif // QT_CONFIG(tooltip)
-        self.cb_sort_option_preview.setText(QCoreApplication.translate("MainWindow", u"Preview Mode (1000px image)", None))
+        self.cb_sort_option_preview.setText(QCoreApplication.translate("MainWindow", u"Preview Mode (1000px)", None))
+        self.cb_live_preview.setText(QCoreApplication.translate("MainWindow", u"Live Preview (auto-updating 200px)", None))
         self.t_post_sort_after_image_sort.setText(QCoreApplication.translate("MainWindow", u"After image(s) are sorted:", None))
 #if QT_CONFIG(tooltip)
         self.cb_post_sort_option_save_on_create.setToolTip(QCoreApplication.translate("MainWindow", u"Will save files as soon as they are created", None))
@@ -1069,7 +1085,6 @@ class Ui_MainWindow(object):
         self.t_save_location_current_static.setText(QCoreApplication.translate("MainWindow", u"Current Folder: ", None))
         self.t_save_location_current.setText(QCoreApplication.translate("MainWindow", u"(save location)", None))
         self.b_choose_save_location.setText(QCoreApplication.translate("MainWindow", u"...", None))
-        self.cb_live_preview.setText(QCoreApplication.translate("MainWindow", u"Live Preview", None))
         self.t_image_preview_orig_name_dyn.setText(QCoreApplication.translate("MainWindow", u"(image name)", None))
         self.t_image_preview_sizes_dyn.setText(QCoreApplication.translate("MainWindow", u"(image size)", None))
         self.t_image_preview_ratio_dyn.setText(QCoreApplication.translate("MainWindow", u"(image ratio)", None))

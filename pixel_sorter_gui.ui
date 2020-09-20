@@ -344,7 +344,7 @@
                 </layout>
                </item>
                <item>
-                <widget class="QLabel" name="l_loaded_image_preview">
+                <widget class="FileDragDrop" name="l_loaded_image_preview">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
@@ -702,7 +702,7 @@
                  </layout>
                 </item>
                 <item>
-                 <widget class="QLabel" name="l_loaded_mask_preview">
+                 <widget class="FileDragDrop" name="l_loaded_mask_preview">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
                     <horstretch>0</horstretch>
@@ -1498,22 +1498,22 @@
                       <string>Will save files as soon as they are created</string>
                      </property>
                      <property name="text">
-                      <string>Preview Mode (1000px image)</string>
+                      <string>Preview Mode (1000px)</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <spacer name="verticalSpacer_8">
-                     <property name="orientation">
-                      <enum>Qt::Vertical</enum>
+                    <widget class="QCheckBox" name="cb_live_preview">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
                      </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>20</width>
-                       <height>0</height>
-                      </size>
+                     <property name="text">
+                      <string>Live Preview (auto-updating 200px)</string>
                      </property>
-                    </spacer>
+                    </widget>
                    </item>
                   </layout>
                  </item>
@@ -1535,6 +1535,12 @@
                    </item>
                    <item>
                     <widget class="QCheckBox" name="cb_post_sort_option_save_on_create">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="toolTip">
                       <string>Will save files as soon as they are created</string>
                      </property>
@@ -1545,6 +1551,12 @@
                    </item>
                    <item>
                     <widget class="QCheckBox" name="cb_post_sort_option_picture_viewer">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="toolTip">
                       <string>Will save files as soon as they are created</string>
                      </property>
@@ -2268,79 +2280,114 @@
        </property>
        <item>
         <layout class="QHBoxLayout" name="hl_image_preview_top">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
          <item>
-          <widget class="QCheckBox" name="cb_live_preview">
+          <widget class="QLabel" name="t_image_preview_orig_name_dyn">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <italic>false</italic>
+             <bold>true</bold>
+            </font>
+           </property>
            <property name="text">
-            <string>Live Preview</string>
+            <string>(image name)</string>
            </property>
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_7">
-           <property name="spacing">
-            <number>6</number>
+          <widget class="QLabel" name="t_image_preview_sizes_dyn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
-           <item>
-            <widget class="QLabel" name="t_image_preview_orig_name_dyn">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>25</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <italic>true</italic>
-              </font>
-             </property>
-             <property name="text">
-              <string>(image name)</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="t_image_preview_sizes_dyn">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>25</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <italic>true</italic>
-              </font>
-             </property>
-             <property name="text">
-              <string>(image size)</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="t_image_preview_ratio_dyn">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>25</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <italic>true</italic>
-              </font>
-             </property>
-             <property name="text">
-              <string>(image ratio)</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <italic>false</italic>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>(image size)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="t_image_preview_ratio_dyn">
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <italic>false</italic>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>(image ratio)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Minimum</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -2474,6 +2521,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FileDragDrop</class>
+   <extends>QLabel</extends>
+   <header>CustomWidgets/Drag_Drop</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
