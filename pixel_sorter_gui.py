@@ -43,7 +43,7 @@ class Ui_MainWindow(object):
         self.f_settings_panel.setFrameShadow(QFrame.Sunken)
         self.f_settings_panel.setLineWidth(1)
         self.verticalLayout = QVBoxLayout(self.f_settings_panel)
-        self.verticalLayout.setSpacing(2)
+        self.verticalLayout.setSpacing(6)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(2, 2, 0, 2)
         self.scroll_area_settings = QScrollArea(self.f_settings_panel)
@@ -53,6 +53,8 @@ class Ui_MainWindow(object):
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.scroll_area_settings.sizePolicy().hasHeightForWidth())
         self.scroll_area_settings.setSizePolicy(sizePolicy1)
+        self.scroll_area_settings.setFrameShadow(QFrame.Plain)
+        self.scroll_area_settings.setLineWidth(10)
         self.scroll_area_settings.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.scroll_area_settings.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.scroll_area_settings.setWidgetResizable(True)
@@ -66,9 +68,9 @@ class Ui_MainWindow(object):
         sizePolicy2.setHeightForWidth(self.scroll_area_settings_content.sizePolicy().hasHeightForWidth())
         self.scroll_area_settings_content.setSizePolicy(sizePolicy2)
         self.verticalLayout_5 = QVBoxLayout(self.scroll_area_settings_content)
-        self.verticalLayout_5.setSpacing(4)
+        self.verticalLayout_5.setSpacing(6)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.verticalLayout_5.setContentsMargins(10, 5, 10, 5)
+        self.verticalLayout_5.setContentsMargins(10, 0, 10, 5)
         self.line_major_5 = QFrame(self.scroll_area_settings_content)
         self.line_major_5.setObjectName(u"line_major_5")
         self.line_major_5.setWindowModality(Qt.NonModal)
@@ -124,6 +126,15 @@ class Ui_MainWindow(object):
 
         self.vl_image.addLayout(self.hl_header_image)
 
+        self.line_5 = QFrame(self.scroll_area_settings_content)
+        self.line_5.setObjectName(u"line_5")
+        self.line_5.setFrameShadow(QFrame.Plain)
+        self.line_5.setLineWidth(1)
+        self.line_5.setMidLineWidth(0)
+        self.line_5.setFrameShape(QFrame.HLine)
+
+        self.vl_image.addWidget(self.line_5)
+
         self.hl_Image = QHBoxLayout()
         self.hl_Image.setObjectName(u"hl_Image")
         self.hl_Image.setContentsMargins(0, 2, 0, 2)
@@ -148,6 +159,12 @@ class Ui_MainWindow(object):
         self.b_load_current.setMinimumSize(QSize(100, 30))
 
         self.vl_left.addWidget(self.b_load_current)
+
+        self.label = QLabel(self.scroll_area_settings_content)
+        self.label.setObjectName(u"label")
+        self.label.setFont(font1)
+
+        self.vl_left.addWidget(self.label)
 
         self.verticalSpacer_2 = QSpacerItem(20, 5, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -200,7 +217,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addWidget(self.line_major_1)
 
         self.vl_image_mask = QVBoxLayout()
-        self.vl_image_mask.setSpacing(2)
+        self.vl_image_mask.setSpacing(6)
         self.vl_image_mask.setObjectName(u"vl_image_mask")
         self.vl_image_mask.setContentsMargins(2, 2, 2, 2)
         self.hl_header_image_mask = QHBoxLayout()
@@ -227,6 +244,15 @@ class Ui_MainWindow(object):
 
 
         self.vl_image_mask.addLayout(self.hl_header_image_mask)
+
+        self.line_6 = QFrame(self.scroll_area_settings_content)
+        self.line_6.setObjectName(u"line_6")
+        self.line_6.setFrameShadow(QFrame.Plain)
+        self.line_6.setLineWidth(1)
+        self.line_6.setMidLineWidth(0)
+        self.line_6.setFrameShape(QFrame.HLine)
+
+        self.vl_image_mask.addWidget(self.line_6)
 
         self.hl_mask_selection = QHBoxLayout()
         self.hl_mask_selection.setObjectName(u"hl_mask_selection")
@@ -257,6 +283,15 @@ class Ui_MainWindow(object):
 
 
         self.vl_image_mask.addLayout(self.hl_mask_selection)
+
+        self.line_16 = QFrame(self.scroll_area_settings_content)
+        self.line_16.setObjectName(u"line_16")
+        self.line_16.setFrameShadow(QFrame.Plain)
+        self.line_16.setLineWidth(1)
+        self.line_16.setMidLineWidth(0)
+        self.line_16.setFrameShape(QFrame.HLine)
+
+        self.vl_image_mask.addWidget(self.line_16)
 
         self.f_hl_mask_none = QFrame(self.scroll_area_settings_content)
         self.f_hl_mask_none.setObjectName(u"f_hl_mask_none")
@@ -302,6 +337,12 @@ class Ui_MainWindow(object):
         self.b_choose_mask.setMinimumSize(QSize(100, 30))
 
         self.vl_mask_single_left.addWidget(self.b_choose_mask)
+
+        self.label_2 = QLabel(self.f_hl_mask_single)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setFont(font1)
+
+        self.vl_mask_single_left.addWidget(self.label_2)
 
         self.verticalSpacer_4 = QSpacerItem(20, 5, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -469,6 +510,15 @@ class Ui_MainWindow(object):
 
         self.vl_interval_function.addLayout(self.hl_header_interval_sorting)
 
+        self.line_7 = QFrame(self.scroll_area_settings_content)
+        self.line_7.setObjectName(u"line_7")
+        self.line_7.setFrameShadow(QFrame.Plain)
+        self.line_7.setLineWidth(1)
+        self.line_7.setMidLineWidth(0)
+        self.line_7.setFrameShape(QFrame.HLine)
+
+        self.vl_interval_function.addWidget(self.line_7)
+
         self.hl_interval_function = QHBoxLayout()
         self.hl_interval_function.setSpacing(20)
         self.hl_interval_function.setObjectName(u"hl_interval_function")
@@ -492,6 +542,15 @@ class Ui_MainWindow(object):
 
 
         self.vl_interval_function.addLayout(self.hl_interval_function)
+
+        self.line_12 = QFrame(self.scroll_area_settings_content)
+        self.line_12.setObjectName(u"line_12")
+        self.line_12.setFrameShadow(QFrame.Plain)
+        self.line_12.setLineWidth(1)
+        self.line_12.setMidLineWidth(0)
+        self.line_12.setFrameShape(QFrame.HLine)
+
+        self.vl_interval_function.addWidget(self.line_12)
 
         self.hl_parameters_indent = QHBoxLayout()
         self.hl_parameters_indent.setObjectName(u"hl_parameters_indent")
@@ -602,6 +661,15 @@ class Ui_MainWindow(object):
 
         self.vl_pixel_ordering.addLayout(self.hl_header_pixel_ordering)
 
+        self.line_8 = QFrame(self.scroll_area_settings_content)
+        self.line_8.setObjectName(u"line_8")
+        self.line_8.setFrameShadow(QFrame.Plain)
+        self.line_8.setLineWidth(1)
+        self.line_8.setMidLineWidth(0)
+        self.line_8.setFrameShape(QFrame.HLine)
+
+        self.vl_pixel_ordering.addWidget(self.line_8)
+
         self.horizontalLayout_6 = QHBoxLayout()
         self.horizontalLayout_6.setSpacing(20)
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
@@ -669,6 +737,15 @@ class Ui_MainWindow(object):
 
         self.vl_save_location.addLayout(self.hl_header_image_output)
 
+        self.line_9 = QFrame(self.scroll_area_settings_content)
+        self.line_9.setObjectName(u"line_9")
+        self.line_9.setFrameShadow(QFrame.Plain)
+        self.line_9.setLineWidth(1)
+        self.line_9.setMidLineWidth(0)
+        self.line_9.setFrameShape(QFrame.HLine)
+
+        self.vl_save_location.addWidget(self.line_9)
+
         self.vl_generation = QVBoxLayout()
         self.vl_generation.setObjectName(u"vl_generation")
         self.vl_generation.setContentsMargins(2, 2, 2, 2)
@@ -730,6 +807,15 @@ class Ui_MainWindow(object):
 
 
         self.vl_generation.addLayout(self.hl_generation_2)
+
+        self.line_11 = QFrame(self.scroll_area_settings_content)
+        self.line_11.setObjectName(u"line_11")
+        self.line_11.setFrameShadow(QFrame.Plain)
+        self.line_11.setLineWidth(1)
+        self.line_11.setMidLineWidth(0)
+        self.line_11.setFrameShape(QFrame.HLine)
+
+        self.vl_generation.addWidget(self.line_11)
 
         self.hl_generation = QHBoxLayout()
         self.hl_generation.setSpacing(6)
@@ -841,13 +927,14 @@ class Ui_MainWindow(object):
 
         self.vl_generation.addLayout(self.hl_generation)
 
-        self.line_4 = QFrame(self.scroll_area_settings_content)
-        self.line_4.setObjectName(u"line_4")
-        self.line_4.setFrameShadow(QFrame.Sunken)
-        self.line_4.setLineWidth(2)
-        self.line_4.setFrameShape(QFrame.HLine)
+        self.line_10 = QFrame(self.scroll_area_settings_content)
+        self.line_10.setObjectName(u"line_10")
+        self.line_10.setFrameShadow(QFrame.Plain)
+        self.line_10.setLineWidth(1)
+        self.line_10.setMidLineWidth(0)
+        self.line_10.setFrameShape(QFrame.HLine)
 
-        self.vl_generation.addWidget(self.line_4)
+        self.vl_generation.addWidget(self.line_10)
 
         self.hl_save_location = QHBoxLayout()
         self.hl_save_location.setSpacing(2)
@@ -924,7 +1011,18 @@ class Ui_MainWindow(object):
         self.f_preview_panel.setFrameShape(QFrame.NoFrame)
         self.verticalLayout_2 = QVBoxLayout(self.f_preview_panel)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_2.setContentsMargins(0, -1, -1, -1)
+        self.verticalLayout_2.setContentsMargins(0, 2, 2, 2)
+        self.line_major_6 = QFrame(self.f_preview_panel)
+        self.line_major_6.setObjectName(u"line_major_6")
+        self.line_major_6.setWindowModality(Qt.NonModal)
+        sizePolicy3.setHeightForWidth(self.line_major_6.sizePolicy().hasHeightForWidth())
+        self.line_major_6.setSizePolicy(sizePolicy3)
+        self.line_major_6.setFrameShadow(QFrame.Plain)
+        self.line_major_6.setLineWidth(2)
+        self.line_major_6.setFrameShape(QFrame.HLine)
+
+        self.verticalLayout_2.addWidget(self.line_major_6)
+
         self.hl_image_preview_top = QHBoxLayout()
         self.hl_image_preview_top.setObjectName(u"hl_image_preview_top")
         self.hl_image_preview_top.setContentsMargins(-1, 0, -1, -1)
@@ -942,15 +1040,46 @@ class Ui_MainWindow(object):
 
         self.hl_image_preview_top.addWidget(self.t_image_preview_orig_name_dyn)
 
-        self.t_image_preview_sizes_dyn = QLabel(self.f_preview_panel)
-        self.t_image_preview_sizes_dyn.setObjectName(u"t_image_preview_sizes_dyn")
-        sizePolicy.setHeightForWidth(self.t_image_preview_sizes_dyn.sizePolicy().hasHeightForWidth())
-        self.t_image_preview_sizes_dyn.setSizePolicy(sizePolicy)
-        self.t_image_preview_sizes_dyn.setMinimumSize(QSize(150, 0))
-        self.t_image_preview_sizes_dyn.setMaximumSize(QSize(16777215, 25))
-        self.t_image_preview_sizes_dyn.setFont(font4)
+        self.line_4 = QFrame(self.f_preview_panel)
+        self.line_4.setObjectName(u"line_4")
+        self.line_4.setFrameShadow(QFrame.Plain)
+        self.line_4.setFrameShape(QFrame.VLine)
 
-        self.hl_image_preview_top.addWidget(self.t_image_preview_sizes_dyn)
+        self.hl_image_preview_top.addWidget(self.line_4)
+
+        self.t_image_preview_size_original_dyn = QLabel(self.f_preview_panel)
+        self.t_image_preview_size_original_dyn.setObjectName(u"t_image_preview_size_original_dyn")
+        sizePolicy.setHeightForWidth(self.t_image_preview_size_original_dyn.sizePolicy().hasHeightForWidth())
+        self.t_image_preview_size_original_dyn.setSizePolicy(sizePolicy)
+        self.t_image_preview_size_original_dyn.setMinimumSize(QSize(150, 0))
+        self.t_image_preview_size_original_dyn.setMaximumSize(QSize(16777215, 25))
+        self.t_image_preview_size_original_dyn.setFont(font4)
+
+        self.hl_image_preview_top.addWidget(self.t_image_preview_size_original_dyn)
+
+        self.line_14 = QFrame(self.f_preview_panel)
+        self.line_14.setObjectName(u"line_14")
+        self.line_14.setFrameShadow(QFrame.Plain)
+        self.line_14.setFrameShape(QFrame.VLine)
+
+        self.hl_image_preview_top.addWidget(self.line_14)
+
+        self.t_image_preview_size_displayed_dyn = QLabel(self.f_preview_panel)
+        self.t_image_preview_size_displayed_dyn.setObjectName(u"t_image_preview_size_displayed_dyn")
+        sizePolicy.setHeightForWidth(self.t_image_preview_size_displayed_dyn.sizePolicy().hasHeightForWidth())
+        self.t_image_preview_size_displayed_dyn.setSizePolicy(sizePolicy)
+        self.t_image_preview_size_displayed_dyn.setMinimumSize(QSize(150, 0))
+        self.t_image_preview_size_displayed_dyn.setMaximumSize(QSize(16777215, 25))
+        self.t_image_preview_size_displayed_dyn.setFont(font4)
+
+        self.hl_image_preview_top.addWidget(self.t_image_preview_size_displayed_dyn)
+
+        self.line_15 = QFrame(self.f_preview_panel)
+        self.line_15.setObjectName(u"line_15")
+        self.line_15.setFrameShadow(QFrame.Plain)
+        self.line_15.setFrameShape(QFrame.VLine)
+
+        self.hl_image_preview_top.addWidget(self.line_15)
 
         self.t_image_preview_ratio_dyn = QLabel(self.f_preview_panel)
         self.t_image_preview_ratio_dyn.setObjectName(u"t_image_preview_ratio_dyn")
@@ -960,12 +1089,29 @@ class Ui_MainWindow(object):
 
         self.hl_image_preview_top.addWidget(self.t_image_preview_ratio_dyn)
 
-        self.horizontalSpacer_10 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.horizontalSpacer_10 = QSpacerItem(20, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.hl_image_preview_top.addItem(self.horizontalSpacer_10)
 
+        self.b_open_in_native_viewer = QPushButton(self.f_preview_panel)
+        self.b_open_in_native_viewer.setObjectName(u"b_open_in_native_viewer")
+        sizePolicy6.setHeightForWidth(self.b_open_in_native_viewer.sizePolicy().hasHeightForWidth())
+        self.b_open_in_native_viewer.setSizePolicy(sizePolicy6)
+        self.b_open_in_native_viewer.setMinimumSize(QSize(100, 30))
+
+        self.hl_image_preview_top.addWidget(self.b_open_in_native_viewer)
+
 
         self.verticalLayout_2.addLayout(self.hl_image_preview_top)
+
+        self.line_13 = QFrame(self.f_preview_panel)
+        self.line_13.setObjectName(u"line_13")
+        self.line_13.setFrameShadow(QFrame.Plain)
+        self.line_13.setLineWidth(1)
+        self.line_13.setMidLineWidth(0)
+        self.line_13.setFrameShape(QFrame.HLine)
+
+        self.verticalLayout_2.addWidget(self.line_13)
 
         self.line_2 = QFrame(self.f_preview_panel)
         self.line_2.setObjectName(u"line_2")
@@ -988,7 +1134,7 @@ class Ui_MainWindow(object):
         self.image_viewer_hq.setSizePolicy(sizePolicy14)
         self.image_viewer_hq.setMinimumSize(QSize(400, 200))
         self.image_viewer_hq.setMaximumSize(QSize(1500, 1000))
-        self.image_viewer_hq.setFrameShape(QFrame.NoFrame)
+        self.image_viewer_hq.setFrameShape(QFrame.StyledPanel)
         self.image_viewer_hq.setFrameShadow(QFrame.Plain)
         self.image_viewer_hq.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
@@ -1007,14 +1153,6 @@ class Ui_MainWindow(object):
         self.horizontalSpacer_3 = QSpacerItem(5, 5, QSizePolicy.Preferred, QSizePolicy.Minimum)
 
         self.hl_image_preview_bottom.addItem(self.horizontalSpacer_3)
-
-        self.b_open_in_native_viewer = QPushButton(self.f_preview_panel)
-        self.b_open_in_native_viewer.setObjectName(u"b_open_in_native_viewer")
-        sizePolicy6.setHeightForWidth(self.b_open_in_native_viewer.sizePolicy().hasHeightForWidth())
-        self.b_open_in_native_viewer.setSizePolicy(sizePolicy6)
-        self.b_open_in_native_viewer.setMinimumSize(QSize(100, 30))
-
-        self.hl_image_preview_bottom.addWidget(self.b_open_in_native_viewer)
 
 
         self.verticalLayout_2.addLayout(self.hl_image_preview_bottom)
@@ -1039,6 +1177,7 @@ class Ui_MainWindow(object):
         self.t_image_desc.setText(QCoreApplication.translate("MainWindow", u"*Required* This is the image that will have pixel sorting applied to it. JPG, PNG, TIFF, etc.", None))
         self.b_choose_image.setText(QCoreApplication.translate("MainWindow", u"Choose Image", None))
         self.b_load_current.setText(QCoreApplication.translate("MainWindow", u"Load Current", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"(or drag and drop image)", None))
         self.l_loaded_image_preview.setText(QCoreApplication.translate("MainWindow", u"Loaded image will display here", None))
         self.t_image_mask.setText(QCoreApplication.translate("MainWindow", u"Image Mask", None))
         self.t_image_mask_desc.setText(QCoreApplication.translate("MainWindow", u"Image used for masking parts of the image. Must be black and white.", None))
@@ -1047,6 +1186,7 @@ class Ui_MainWindow(object):
         self.rb_mask_folder.setText(QCoreApplication.translate("MainWindow", u"Masks from Folder", None))
         self.t_no_mask.setText(QCoreApplication.translate("MainWindow", u"No mask image will be used.", None))
         self.b_choose_mask.setText(QCoreApplication.translate("MainWindow", u"Choose Image", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"(or drag and drop image)", None))
         self.l_loaded_mask_preview.setText(QCoreApplication.translate("MainWindow", u"Loaded mask will display here", None))
         self.t_mask_folder_info_header.setText(QCoreApplication.translate("MainWindow", u"Note: If the loaded image is in found in the mask folder it will be ignored.", None))
         self.b_choose_mask_folder.setText(QCoreApplication.translate("MainWindow", u"Choose Folder", None))
@@ -1087,7 +1227,8 @@ class Ui_MainWindow(object):
         self.t_save_location_current.setText(QCoreApplication.translate("MainWindow", u"(save location)", None))
         self.b_choose_save_location.setText(QCoreApplication.translate("MainWindow", u"...", None))
         self.t_image_preview_orig_name_dyn.setText(QCoreApplication.translate("MainWindow", u"(image name)", None))
-        self.t_image_preview_sizes_dyn.setText(QCoreApplication.translate("MainWindow", u"(image size)", None))
+        self.t_image_preview_size_original_dyn.setText(QCoreApplication.translate("MainWindow", u"(image size)", None))
+        self.t_image_preview_size_displayed_dyn.setText(QCoreApplication.translate("MainWindow", u"(image size)", None))
         self.t_image_preview_ratio_dyn.setText(QCoreApplication.translate("MainWindow", u"(image ratio)", None))
         self.b_open_in_native_viewer.setText(QCoreApplication.translate("MainWindow", u"Open in Viewer", None))
     # retranslateUi

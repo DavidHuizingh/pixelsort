@@ -1,19 +1,11 @@
 
 # Solution for PyQt5 below:
 # https://www.reddit.com/r/learnpython/comments/97z5dq/pyqt5_drag_and_drop_file_option/
-
-#from PyQt5.QtWidgets import QtWidgets.QMessageBox, QLineEdit
-#from PyQt5.QtGui import QIcon
+# A PySide2 version, and modified version of the code is below:
 
 import sys
 import os
-
 from PySide2 import QtWidgets, QtGui, QtCore
-
-#from Pyside2.QtWidgets import QMessageBox, QLineEdit
-#from Pyside2.QtGui import QIcon
-
-
 
 
 class FileDragDrop(QtWidgets.QLabel):
@@ -21,7 +13,9 @@ class FileDragDrop(QtWidgets.QLabel):
         super(FileDragDrop, self).__init__(parent)
 
         self.setAcceptDrops(True)
-        #self.setDragEnabled(True)
+
+        self.sorter_image_type = None       # Set during main app's setup to either "main" or "mask"
+        self.drop_callback = None           # Also set by main app's setup.
 
     def dragEnterEvent(self, event):
         data = event.mimeData()
@@ -39,10 +33,27 @@ class FileDragDrop(QtWidgets.QLabel):
 
     def dropEvent(self, event):
         data = event.mimeData()
-        urls = data.urls()
-
-        print(f"FILES DRAGGED IN: {urls}")
+        #urls = data.urls()
         
+        url_paths = [str(url.toLocalFile()) for url in data.urls()]
+        
+        # callback to method
+        try:
+            # def images_dropped(self, urls, sorter_image_type, label_wig)
+            self.drop_callback(url_paths, self.sorter_image_type)
+        except:
+            print("drop_callback was not handled correctly.")
+        #print(f"FILES DRAGGED IN: {urls}")
+        
+
+    def setDropEventCallback(self, method=None):
+        '''Pass in a method that should be called when the drop event is triggered.'''
+
+        self.drop_callback = method
+
+
+
+
         '''
         if urls and urls[0].scheme() == 'file':
             filepath = str(urls[0].path())[1:]

@@ -499,13 +499,11 @@ class Sort_App():
         def load_image_main():
             self.images_picked(picker_wig=None,
                 sorter_image_type="main",
-                label_wig=self.gui.l_loaded_image_preview,
                 debug_override_images=[debug_image_main]
                 )
         def load_image_mask():
             self.images_picked(picker_wig=None,
                 sorter_image_type="mask",
-                label_wig=self.gui.l_loaded_mask_preview,
                 debug_override_images=[debug_image_mask]
                 )
 
@@ -536,16 +534,16 @@ class Sort_App():
 
         gui.b_choose_image.pressed
         gui.b_choose_image.clicked.connect(lambda: self.show_image_picker(
-            sorter_image_type="main", label_wig=gui.l_loaded_image_preview)
+            sorter_image_type="main")
             )
         gui.b_load_current.clicked.connect(lambda: self.make_sorter_image_from_sorted_image())
 
 
         gui.b_choose_mask.clicked.connect(lambda: self.show_image_picker(
-            sorter_image_type="mask", label_wig=gui.l_loaded_mask_preview)
+            sorter_image_type="mask")
             )
         gui.b_choose_mask_folder.clicked.connect(lambda: self.show_image_picker(
-            sorter_image_type="mask", label_wig=gui.l_loaded_mask_preview)
+            sorter_image_type="mask")
             )
         
         gui.b_choose_save_location.pressed.connect(lambda: self.select_output_location())
@@ -606,7 +604,12 @@ class Sort_App():
 
         ### IMAGE DISPLAY ###
 
-        # 
+        # Custom drag and drop widget values:
+        gui.l_loaded_image_preview.sorter_image_type = "main"
+        gui.l_loaded_image_preview.setDropEventCallback(method=self.images_dropped)
+
+        gui.l_loaded_mask_preview.sorter_image_type = "mask"
+        gui.l_loaded_mask_preview.setDropEventCallback(method=self.images_dropped)
 
         ### OTHER ###
         gui.b_open_in_native_viewer.pressed.connect(lambda:
@@ -626,7 +629,7 @@ class Sort_App():
         self.update_ui_preview_label_size()
 
         ### SET STYLING ###
-        self.app.setStyleSheet(style.load_stylesheet())
+        #self.app.setStyleSheet(style.load_stylesheet())
     
     @Decorators.fast_preview_check
     @Decorators.image_size_warning_check
@@ -654,7 +657,8 @@ class Sort_App():
             image_ratio = blank
         
         self.gui.t_image_preview_orig_name_dyn.setText(f'''Image Name: {img_name}''')
-        self.gui.t_image_preview_sizes_dyn.setText(f'''Sizes:\n- original ({size_original}),\n- displayed ({size_display})''')
+        self.gui.t_image_preview_size_original_dyn.setText(f'''Original Resolution: ({size_original})''')
+        self.gui.t_image_preview_size_displayed_dyn.setText(f'''Displayed Resolution: ({size_display})''')
         self.gui.t_image_preview_ratio_dyn.setText(f'''Displayed Ratio: {image_ratio}''')
 
     def open_in_native_viewer_handler(self, PIL_image=None, button_pressed=False):
@@ -819,7 +823,7 @@ class Sort_App():
             if radio.isChecked():
                 self.gui_active_mask_section = section
 
-    def show_image_picker(self, sorter_image_type, label_wig):
+    def show_image_picker(self, sorter_image_type):
         '''Opens the window to select an image in.
         Pass in how the image will be used ("main" or "mask") and the label widget that will display the thumbnail.'''
         
@@ -838,25 +842,18 @@ class Sort_App():
             p = str(Path().absolute())
             picker.setDirectory(p)
             picker.fileSelected.connect(lambda: self.images_picked(
-                picker_wig=picker, sorter_image_type=sorter_image_type, label_wig=label_wig)
+                picker_wig=picker, sorter_image_type=sorter_image_type)
                 )
             picker.show()
 
-    @Decorators.image_size_warning_check
-    def images_picked(self, picker_wig, sorter_image_type, label_wig, debug_override_images=None):
-        '''Pass in a path to an image and the label widget that it show show up in.'''
-        
-        if not debug_override_images:
-            pic_urls = picker_wig.selectedFiles()
-            picker_wig.setParent(None)
-        
-        else:
-            pic_urls = debug_override_images
+    def check_urls(self, urls):
+        '''Go through the urls it has been given and makes sure they're valid
+        or, in the case of directories, fetches compatible files.'''
 
-        if pic_urls:
+        if urls is not None:
             # Checks if what user selected is a dir or files:
-            if Path(pic_urls[0]).is_dir():
-                selected_dir = Path(pic_urls[0])
+            if Path(urls[0]).is_dir():
+                selected_dir = Path(urls[0])
                 
                 files_in_folder = []
                 for file_type in ["*.jpg", "*.png", "*.bmp", "*.tiff"]:
@@ -865,9 +862,38 @@ class Sort_App():
 
                 pic_paths = [Path(pic) for pic in files_in_folder]
             else:   # files are images
-                pic_paths = [Path(pic) for pic in pic_urls]
+                pic_paths = [Path(pic) for pic in urls]
 
-        # Creates Sorter_Image objs from the found pics:
+        return pic_paths           
+
+    def images_picked(self, picker_wig, sorter_image_type, debug_override_images=None):
+        '''Pass in a path to an image and what type of image ("main" or "mask").'''
+        # This is used by the dialogue widget
+        if not debug_override_images:
+            if picker_wig:
+                pic_urls = picker_wig.selectedFiles()
+                picker_wig.setParent(None)
+        else:
+            pic_urls = debug_override_images
+
+        pic_paths = self.check_urls(urls=pic_urls)
+        self.create_sorter_images(pic_paths=pic_paths, sorter_image_type=sorter_image_type)
+
+
+    def images_dropped(self, urls, sorter_image_type):
+        '''Pass in a path to an image and the label widget that it show show up in.'''
+        # This is used when the user drags and drops files into the application.
+        # This method is called by the widget the files were dropped onto.
+
+        pic_paths = self.check_urls(urls=urls)
+        self.create_sorter_images(pic_paths=pic_paths, sorter_image_type=sorter_image_type)
+
+
+    @Decorators.image_size_warning_check
+    def create_sorter_images(self, pic_paths, sorter_image_type):
+        '''Creates "Sorter_Image" objs from the pic paths passed in.
+        Will also try to update the "Label" widget that corrisponds with it's type ("main" or "mask").'''
+
         imgs = [(Sorter_Image(img_file_path=p, sorter_img_type=sorter_image_type)) for p in pic_paths]
         if sorter_image_type == "main":
             self.sorter_images = imgs
@@ -895,6 +921,12 @@ class Sort_App():
         # Displays first image's thumbnail:
         try:        # first_img may not have been set.    
             pix_map = first_img.create_pixmap(first_img.thumbnail)
+            if sorter_image_type == "main":
+                label_wig = self.gui.l_loaded_image_preview
+            elif sorter_image_type == "mask":
+                label_wig = self.gui.l_loaded_mask_preview
+            else:
+                pass
             label_wig.setPixmap(pix_map)
             label_wig.setMaximumSize(QtCore.QSize(200, 200))
         except:
